@@ -63,7 +63,9 @@ public class AsYouTypeFormatterTest extends TestCase {
     assertEquals("650 253 2", formatter.inputDigit('2'));
     assertEquals("650 253 22", formatter.inputDigit('2'));
     assertEquals("650 253 222", formatter.inputDigit('2'));
-    assertEquals("650 253 2222", formatter.inputDigit('2'));
+    // No more formatting when semicolon is entered.
+    assertEquals("650253222;", formatter.inputDigit(';'));
+    assertEquals("650253222;2", formatter.inputDigit('2'));
 
     formatter.clear();
     assertEquals("6", formatter.inputDigit('6'));
@@ -177,6 +179,21 @@ public class AsYouTypeFormatterTest extends TestCase {
     assertEquals("*12", formatter.inputDigit('2'));
     assertEquals("*121", formatter.inputDigit('1'));
     assertEquals("*121#", formatter.inputDigit('#'));
+
+    // Test vanity numbers.
+    formatter.clear();
+    assertEquals("8", formatter.inputDigit('8'));
+    assertEquals("80", formatter.inputDigit('0'));
+    assertEquals("800", formatter.inputDigit('0'));
+    assertEquals("800 ", formatter.inputDigit(' '));
+    assertEquals("800 M", formatter.inputDigit('M'));
+    assertEquals("800 MY", formatter.inputDigit('Y'));
+    assertEquals("800 MY ", formatter.inputDigit(' '));
+    assertEquals("800 MY A", formatter.inputDigit('A'));
+    assertEquals("800 MY AP", formatter.inputDigit('P'));
+    assertEquals("800 MY APP", formatter.inputDigit('P'));
+    assertEquals("800 MY APPL", formatter.inputDigit('L'));
+    assertEquals("800 MY APPLE", formatter.inputDigit('E'));
   }
 
   public void testAsYouTypeFormatterGBFixedLine() {
@@ -231,10 +248,10 @@ public class AsYouTypeFormatterTest extends TestCase {
     assertEquals("021", formatter.inputDigit('1'));
     assertEquals("0211", formatter.inputDigit('1'));
     assertEquals("02112", formatter.inputDigit('2'));
-    assertEquals("021123", formatter.inputDigit('3'));
-    assertEquals("0211234", formatter.inputDigit('4'));
-    assertEquals("02112345", formatter.inputDigit('5'));
-    assertEquals("021123456", formatter.inputDigit('6'));
+    assertEquals("02-112 3", formatter.inputDigit('3'));
+    assertEquals("02-112 34", formatter.inputDigit('4'));
+    assertEquals("02-112 345", formatter.inputDigit('5'));
+    assertEquals("02-112 3456", formatter.inputDigit('6'));
   }
 
   public void testAsYouTypeFormatterDE() {
@@ -244,8 +261,8 @@ public class AsYouTypeFormatterTest extends TestCase {
     assertEquals("030", formatter.inputDigit('0'));
     assertEquals("0301", formatter.inputDigit('1'));
     assertEquals("03012", formatter.inputDigit('2'));
-    assertEquals("030123", formatter.inputDigit('3'));
-    assertEquals("0301234", formatter.inputDigit('4'));
+    assertEquals("030 123", formatter.inputDigit('3'));
+    assertEquals("030 1234", formatter.inputDigit('4'));
   }
 
   public void testAsYouTypeFormatterAR() {
