@@ -23,13 +23,13 @@ LOCAL_SRC_FILES := java/src/com/google/i18n/phonenumbers/AsYouTypeFormatter.java
 	java/src/com/google/i18n/phonenumbers/NumberParseException.java \
 	java/src/com/google/i18n/phonenumbers/Phonemetadata.java \
 	java/src/com/google/i18n/phonenumbers/Phonenumber.java \
-	java/src/com/google/i18n/phonenumbers/PhoneNumberUtil.java
+	java/src/com/google/i18n/phonenumbers/PhoneNumberUtil.java \
+	java/src/com/google/i18n/phonenumbers/RegexCache.java
 
 LOCAL_JAVA_RESOURCE_DIRS := java/resources/com/google/i18n/phonenumbers/src/generated_files
 
 LOCAL_MODULE := libphonenumber
 
-LOCAL_JAVA_LIBRARIES := guava
 include $(BUILD_JAVA_LIBRARY)
 #################################
 include $(CLEAR_VARS)
