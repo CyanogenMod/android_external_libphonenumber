@@ -31,8 +31,3 @@ LOCAL_JAVA_RESOURCE_DIRS := java/resources/com/google/i18n/phonenumbers/src/gene
 LOCAL_MODULE := libphonenumber
 
 include $(BUILD_JAVA_LIBRARY)
-#################################
-include $(CLEAR_VARS)
-
-LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES := protobuf:java/lib/protobuf-lite.jar
-include $(BUILD_MULTI_PREBUILT)
