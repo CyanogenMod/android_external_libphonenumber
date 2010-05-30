@@ -17,16 +17,9 @@
 LOCAL_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
-LOCAL_STATIC_JAVA_LIBRARIES := protobuf
+LOCAL_SRC_FILES := $(call all-java-files-under, java/src)
 
-LOCAL_SRC_FILES := java/src/com/google/i18n/phonenumbers/AsYouTypeFormatter.java \
-	java/src/com/google/i18n/phonenumbers/NumberParseException.java \
-	java/src/com/google/i18n/phonenumbers/Phonemetadata.java \
-	java/src/com/google/i18n/phonenumbers/Phonenumber.java \
-	java/src/com/google/i18n/phonenumbers/PhoneNumberUtil.java \
-	java/src/com/google/i18n/phonenumbers/RegexCache.java
-
-LOCAL_JAVA_RESOURCE_DIRS := java/resources/com/google/i18n/phonenumbers/src/generated_files
+LOCAL_JAVA_RESOURCE_DIRS := java/src
 
 LOCAL_MODULE := libphonenumber
 
