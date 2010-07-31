@@ -54,11 +54,10 @@ public class BuildMetadataProtoFromXml {
 
   public static void main(String[] args) throws Exception {
     String inputFile = args[0];
-    String outputFile = args[1];
+    String filePrefix = args[1];
     liteBuild = args.length > 2 && Boolean.getBoolean(args[2]);
     File xmlFile = new File(inputFile);
 
-    FileOutputStream output = new FileOutputStream(outputFile);
     DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
     DocumentBuilder builder = builderFactory.newDocumentBuilder();
     Document document = builder.parse(xmlFile);
@@ -72,14 +71,16 @@ public class BuildMetadataProtoFromXml {
       String regionCode = territoryElement.getAttribute("id");
       PhoneMetadata metadata = loadCountryMetadata(regionCode, territoryElement);
       metadataCollection.addMetadata(metadata);
+      FileOutputStream outputForRegion = new FileOutputStream(filePrefix + "_" + regionCode);
+      ObjectOutputStream out = new ObjectOutputStream(outputForRegion);
+      metadataCollection.writeExternal(out);
+      out.close();
+      metadataCollection.clear();
     }
-    ObjectOutputStream out = new ObjectOutputStream(output);
-    metadataCollection.writeExternal(out);
-    out.close();
   }
 
   private static String validateRE(String regex) {
-    Pattern regexPattern = Pattern.compile(regex);
+    Pattern.compile(regex);
     // return regex itself if it is of correct regex syntax
     return regex;
   }
@@ -151,7 +152,7 @@ public class BuildMetadataProtoFromXml {
           LOGGER.log(Level.SEVERE,
                      "Only one format pattern for a numberFormat element should be defined.");
           throw new RuntimeException("Invalid number of format patterns for country: " +
-                                     regionCode.toString());
+                                     regionCode);
         }
         format.setFormat(validateRE(formatPattern.item(0).getFirstChild().getNodeValue()));
         metadata.addNumberFormat(format);
@@ -171,7 +172,7 @@ public class BuildMetadataProtoFromXml {
           LOGGER.log(Level.SEVERE,
                      "Only one format pattern for a numberFormat element should be defined.");
           throw new RuntimeException("Invalid number of format patterns for country: " +
-                                     regionCode.toString());
+                                     regionCode);
         }
         format.setFormat(validateRE(formatPattern.item(0).getFirstChild().getNodeValue()));
         if (numberFormatElement.hasAttribute("carrierCodeFormattingRule")) {
