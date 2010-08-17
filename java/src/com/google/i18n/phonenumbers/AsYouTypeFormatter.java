@@ -376,6 +376,10 @@ public class AsYouTypeFormatter {
     } else if (currentMetaData.hasNationalPrefix()) {
       Matcher m = nationalPrefixForParsing.matcher(nationalNumber);
       if (m.lookingAt()) {
+        // When the national prefix is detected, we use international formatting rules instead of
+        // national ones, because national formatting rules could contain local formatting rules
+        // for numbers entered without area code.
+        isInternationalFormatting = true;
         startOfNationalNumber = m.end();
         prefixBeforeNationalNumber.append(nationalNumber.substring(0, startOfNationalNumber));
       }
@@ -414,23 +418,23 @@ public class AsYouTypeFormatter {
    * @return  true when a valid country code can be found.
    */
   private boolean attemptToExtractCountryCode() {
-      if (nationalNumber.length() == 0) {
-        return false;
+    if (nationalNumber.length() == 0) {
+      return false;
+    }
+    StringBuffer numberWithoutCountryCode = new StringBuffer();
+    int countryCode = phoneUtil.extractCountryCode(nationalNumber, numberWithoutCountryCode);
+    if (countryCode == 0) {
+      return false;
+    } else {
+      nationalNumber.setLength(0);
+      nationalNumber.append(numberWithoutCountryCode);
+      String newRegionCode = phoneUtil.getRegionCodeForCountryCode(countryCode);
+      if (!newRegionCode.equals(defaultCountry)) {
+        initializeCountrySpecificInfo(newRegionCode);
       }
-      StringBuffer numberWithoutCountryCode = new StringBuffer();
-      int countryCode = phoneUtil.extractCountryCode(nationalNumber, numberWithoutCountryCode);
-      if (countryCode == 0) {
-        return false;
-      } else {
-        nationalNumber.setLength(0);
-        nationalNumber.append(numberWithoutCountryCode);
-        String newRegionCode = phoneUtil.getRegionCodeForCountryCode(countryCode);
-        if (!newRegionCode.equals(defaultCountry)) {
-          initializeCountrySpecificInfo(newRegionCode);
-        }
-        String countryCodeString = Integer.toString(countryCode);
-        prefixBeforeNationalNumber.append(countryCodeString).append(" ");
-      }
+      String countryCodeString = Integer.toString(countryCode);
+      prefixBeforeNationalNumber.append(countryCodeString).append(" ");
+    }
     return true;
   }
 

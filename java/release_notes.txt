@@ -1,3 +1,19 @@
+August 16th, 2010
+* Bug fixes
+  - AsYouTypeFormatter for formatting Chinese geographical numbers entered in national format.
+  - AsYouTypeFormatter for formatting Chinese 400/800 numbers entered in national format.
+* Metadata change:
+  - new countries: AM, AN, BH, GL, IS
+  - adding national prefix 1 to all NANPA countries.
+  - update to existing countries: BF, FR, UK, PK, RE
+
+August 4th, 2010
+
+* Further improve startup performance
+  - Preload no country specific metadata at startup.
+  - Stop creating the file containing mapping from country calling code to region code
+    and loading it at startup; instead, do the initialization in PhoneNumberUtil.
+
 July 31th, 2010
 
 * Improve startup performance
