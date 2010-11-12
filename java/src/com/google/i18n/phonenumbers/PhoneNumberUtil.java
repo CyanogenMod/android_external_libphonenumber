@@ -381,7 +381,10 @@ public class PhoneNumberUtil {
       LOGGER.log(Level.WARNING, e.toString());
     } finally {
       if (in != null) {
-        in.close();
+        try {
+          in.close();
+        } catch (IOException e) {
+        }
       }
     }
   }
