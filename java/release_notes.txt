@@ -1,3 +1,65 @@
+May 24th, 2011
+* Code changes:
+ - Phonenumber now implements Serializable.
+ - findNumbers doesn't accept numbers with mis-matched brackets as phone-numbers
+ - An offline phone number geocoder has been added. The current implementation just returns the
+   region name for the phone number; more detailed geocoding will be added later.
+* Metadata changes:
+ - New countries: GF, KP, NC, PA, PF, PW, PY, SB, SR, TO, UY, VU
+ - Updates: CY, CZ, ES, GB, GQ, JM, MQ, TN, VI
+
+May 9th, 2011
+* Code changes:
+ - Fixed potential for a null-ptr exception in getExampleNumber
+ - Potential speed improvement with replacement of StringBuffer with StringBuilder
+* Metadata changes
+ - Changed way that international formats are specified to make it easier to do so
+ - New countries: AX, CC, CX, WF
+ - Updates: AM, AR, AU, AW, CN, CO, CR, DM, EC, ET, FI, FJ, GH, IN, JP, KE, KM,
+   KN, LR, MD, MQ, MX, NP, PH, SC, SE, SM, SN, SY, UG, US, VC, VI, ZM
+
+Apr 26th, 2011
+* Code changes:
+ - Improved PhoneNumberMatcher for cases with other numbers before or after the phone number.
+ - Improved AsYouTypeFormatter not to use formatting rules containing non-formatting characters
+   (e.g. '*' in Israeli star numbers).
+* Metadata changes:
+ - New countries: FJ, FM, GY, NF, NI, NR, TV.
+ - Updates: AM, AZ, BF, BW, BZ, CI, CR, GB, GP, HK, JM, KH, LB, LY, MV, PE, PK, SZ, TJ, US.
+* Minor documentation updates
+
+Apr 11th, 2011
+* Bug fixes:
+ - Adding date exclusion pattern in PhoneNumberMatcher.
+ - Fixing bug with selecting a suitable region for numbers with leading zeros where mutiple regions
+   for that country code are possible.
+* Metadata changes:
+ - Updates: AG, AI, AS, BB, BM, BS, CA, DM, DO, ET, FO, GD, GE, GU, IN, JM, KN, KY, LC, MN, MP, MR,
+   MS, NO, PR, TC, TR, TT, US, VC, VG, VI
+ - New countries: CK, FK, GT, IO, KI, SJ, SV
+* Documentation updates and some small refactoring to AsYouTypeFormatter
+
+Mar 31st, 2011
+* New functionality:
+ - Can parse and format numbers in RFC-3966 format.
+ - Added isAlphaNumber to check to see if a number is a "vanity" or "alpha" number
+ - Can format a number made up of alpha-characters in an "out-of-country" format (e.g. 0011 1
+   800-SIX-FLAG to dial an American alpha-number from Australia).
+* Code changes:
+ - Renamed private vars, private methods and fixed comments to try and differentiate between country
+   (calling) codes and region codes.
+ == Non-backwards-compatible API changes: ==
+ - Renamed getSupportedCountries to getSupportedRegions, as this more accurately reflects that the
+   library is based around region codes.
+ - getNationalSignificantNumber is no longer a static method, but is instead an instance method.
+* Metadata changes:
+ - Bug-fixes and updates for AU, AZ, EE, FI, IN, JO, KW, KZ, MV, RU, RR, VA
+ - New country: ME
+
+Mar 22nd, 2011
+* Metadata changes:
+ - New mobile-number pattern for AU
+
 Mar 10th, 2011
 * New functionality:
  - New function to format a number with the preferred domestic carrier code used when parsing,

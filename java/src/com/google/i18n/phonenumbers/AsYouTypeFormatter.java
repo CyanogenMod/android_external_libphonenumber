@@ -28,28 +28,31 @@ import java.util.regex.Pattern;
 /**
  * A formatter which formats phone numbers as they are entered.
  *
- * An AsYouTypeFormatter could be created by invoking the getAsYouTypeFormatter method of the
- * PhoneNumberUtil. After that digits could be added by invoking the inputDigit method on the
- * formatter instance, and the partially formatted phone number will be returned each time a digit
- * is added. The clear method could be invoked before a new number needs to be formatted.
+ * <p>An AsYouTypeFormatter can be created by invoking
+ * {@link PhoneNumberUtil#getAsYouTypeFormatter}. After that, digits can be added by invoking
+ * {@link #inputDigit} on the formatter instance, and the partially formatted phone number will be
+ * returned each time a digit is added. {@link #clear} can be invoked before formatting a new
+ * number.
  *
- * See testAsYouTypeFormatterUS(), testAsYouTestFormatterGB() and testAsYouTypeFormatterDE() in
- * PhoneNumberUtilTest.java for more details on how the formatter is to be used.
+ * <p>See the unittests for more details on how the formatter is to be used.
  *
  * @author Shaopeng Jia
  */
 public class AsYouTypeFormatter {
   private String currentOutput = "";
-  private StringBuffer formattingTemplate = new StringBuffer();
+  private StringBuilder formattingTemplate = new StringBuilder();
   // The pattern from numberFormat that is currently used to create formattingTemplate.
   private String currentFormattingPattern = "";
-  private StringBuffer accruedInput = new StringBuffer();
-  private StringBuffer accruedInputWithoutFormatting = new StringBuffer();
+  private StringBuilder accruedInput = new StringBuilder();
+  private StringBuilder accruedInputWithoutFormatting = new StringBuilder();
   private boolean ableToFormat = true;
   private boolean isInternationalFormatting = false;
-  private boolean isExpectingCountryCode = false;
+  private boolean isExpectingCountryCallingCode = false;
   private final PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
   private String defaultCountry;
+
+  private static final PhoneMetadata EMPTY_METADATA =
+      new PhoneMetadata().setInternationalPrefix("NA");
   private PhoneMetadata defaultMetaData;
   private PhoneMetadata currentMetaData;
 
@@ -62,6 +65,15 @@ public class AsYouTypeFormatter {
   // Two look-aheads are needed because the number following \\d could be a two-digit number, since
   // the phone number can be as long as 15 digits.
   private static final Pattern STANDALONE_DIGIT_PATTERN = Pattern.compile("\\d(?=[^,}][^,}])");
+
+  // A pattern that is used to determine if a numberFormat under availableFormats is eligible to be
+  // used by the AYTF. It is eligible when the format element under numberFormat contains groups of
+  // the dollar sign followed by a single digit, separated by valid phone number punctuation. This
+  // prevents invalid punctuation (such as the star sign in Israeli star numbers) getting into the
+  // output of the AYTF.
+  private static final Pattern ELIGIBLE_FORMAT_PATTERN =
+      Pattern.compile("[" + PhoneNumberUtil.VALID_PUNCTUATION + "]*" +
+          "(\\$\\d" + "[" + PhoneNumberUtil.VALID_PUNCTUATION + "]*)+");
 
   // This is the minimum length of national number accrued that is required to trigger the
   // formatter. The first element of the leadingDigitsPattern of each numberFormat contains a
@@ -79,10 +91,8 @@ public class AsYouTypeFormatter {
   // The position of a digit upon which inputDigitAndRememberPosition is most recently invoked, as
   // found in accruedInputWithoutFormatting.
   private int positionToRemember = 0;
-  private Pattern nationalPrefixForParsing;
-  private Pattern internationalPrefix;
-  private StringBuffer prefixBeforeNationalNumber = new StringBuffer();
-  private StringBuffer nationalNumber = new StringBuffer();
+  private StringBuilder prefixBeforeNationalNumber = new StringBuilder();
+  private StringBuilder nationalNumber = new StringBuilder();
   private List<NumberFormat> possibleFormats = new ArrayList<NumberFormat>();
 
     // A cache for frequently used country-specific regular expressions.
@@ -96,21 +106,18 @@ public class AsYouTypeFormatter {
    */
   AsYouTypeFormatter(String regionCode) {
     defaultCountry = regionCode;
-    initializeCountrySpecificInfo(defaultCountry);
+    currentMetaData = getMetadataForRegion(defaultCountry);
     defaultMetaData = currentMetaData;
   }
 
-  private void initializeCountrySpecificInfo(String regionCode) {
-    currentMetaData = phoneUtil.getMetadataForRegion(regionCode);
-    if (currentMetaData == null) {
-      // Set to a default instance of the metadata. This allows us to function with an incorrect
-      // region code, even if formatting only works for numbers specified with "+".
-      currentMetaData = new PhoneMetadata().setInternationalPrefix("NA");
+  private PhoneMetadata getMetadataForRegion(String regionCode) {
+    PhoneMetadata metadata = phoneUtil.getMetadataForRegion(regionCode);
+    if (metadata != null) {
+      return metadata;
     }
-    nationalPrefixForParsing =
-        regexCache.getPatternForRegex(currentMetaData.getNationalPrefixForParsing());
-    internationalPrefix =
-        regexCache.getPatternForRegex("\\+|" + currentMetaData.getInternationalPrefix());
+    // Set to a default instance of the metadata. This allows us to function with an incorrect
+    // region code, even if formatting only works for numbers specified with "+".
+    return EMPTY_METADATA;
   }
 
   // Returns true if a new template is created as opposed to reusing the existing template.
@@ -133,20 +140,27 @@ public class AsYouTypeFormatter {
 
   private void getAvailableFormats(String leadingThreeDigits) {
     List<NumberFormat> formatList =
-        (isInternationalFormatting && currentMetaData.getIntlNumberFormatCount() > 0)
-        ? currentMetaData.getIntlNumberFormatList()
-        : currentMetaData.getNumberFormatList();
-    possibleFormats.addAll(formatList);
+        (isInternationalFormatting && currentMetaData.intlNumberFormatSize() > 0)
+        ? currentMetaData.intlNumberFormats()
+        : currentMetaData.numberFormats();
+    for (NumberFormat format : formatList) {
+      if (isFormatEligible(format.getFormat())) {
+        possibleFormats.add(format);
+      }
+    }
     narrowDownPossibleFormats(leadingThreeDigits);
   }
 
+  private boolean isFormatEligible(String format) {
+    return ELIGIBLE_FORMAT_PATTERN.matcher(format).matches();
+  }
+
   private void narrowDownPossibleFormats(String leadingDigits) {
-    int lengthOfLeadingDigits = leadingDigits.length();
-    int indexOfLeadingDigitsPattern = lengthOfLeadingDigits - MIN_LEADING_DIGITS_LENGTH;
+    int indexOfLeadingDigitsPattern = leadingDigits.length() - MIN_LEADING_DIGITS_LENGTH;
     Iterator<NumberFormat> it = possibleFormats.iterator();
     while (it.hasNext()) {
       NumberFormat format = it.next();
-      if (format.getLeadingDigitsPatternCount() > indexOfLeadingDigitsPattern) {
+      if (format.leadingDigitsPatternSize() > indexOfLeadingDigitsPattern) {
         Pattern leadingDigitsPattern =
             regexCache.getPatternForRegex(
                 format.getLeadingDigitsPattern(indexOfLeadingDigitsPattern));
@@ -160,7 +174,6 @@ public class AsYouTypeFormatter {
   }
 
   private boolean createFormattingTemplate(NumberFormat format) {
-    String numberFormat = format.getFormat();
     String numberPattern = format.getPattern();
 
     // The formatter doesn't format numbers when numberPattern contains "|", e.g.
@@ -175,7 +188,7 @@ public class AsYouTypeFormatter {
     // Replace any standalone digit (not the one in d{}) with \d
     numberPattern = STANDALONE_DIGIT_PATTERN.matcher(numberPattern).replaceAll("\\\\d");
     formattingTemplate.setLength(0);
-    String tempTemplate = getFormattingTemplate(numberPattern, numberFormat);
+    String tempTemplate = getFormattingTemplate(numberPattern, format.getFormat());
     if (tempTemplate.length() > nationalNumber.length()) {
       formattingTemplate.append(tempTemplate);
       return true;
@@ -183,7 +196,7 @@ public class AsYouTypeFormatter {
     return false;
   }
 
-  // Gets a formatting template which could be used to efficiently format a partial number where
+  // Gets a formatting template which can be used to efficiently format a partial number where
   // digits are added one by one.
   private String getFormattingTemplate(String numberPattern, String numberFormat) {
     // Creates a phone number consisting only of the digit 9 that matches the
@@ -200,7 +213,7 @@ public class AsYouTypeFormatter {
   }
 
   /**
-   * Clears the internal state of the formatter, so it could be reused.
+   * Clears the internal state of the formatter, so it can be reused.
    */
   public void clear() {
     currentOutput = "";
@@ -215,10 +228,10 @@ public class AsYouTypeFormatter {
     positionToRemember = 0;
     originalPosition = 0;
     isInternationalFormatting = false;
-    isExpectingCountryCode = false;
+    isExpectingCountryCallingCode = false;
     possibleFormats.clear();
     if (!currentMetaData.equals(defaultMetaData)) {
-      initializeCountrySpecificInfo(defaultCountry);
+      currentMetaData = getMetadataForRegion(defaultCountry);
     }
   }
 
@@ -226,8 +239,9 @@ public class AsYouTypeFormatter {
    * Formats a phone number on-the-fly as each digit is entered.
    *
    * @param nextChar  the most recently entered digit of a phone number. Formatting characters are
-   *     allowed, but they are removed from the result. Full width digits and Arabic-indic digits
-   *     are allowed, and will be shown as they are.
+   *     allowed, but as soon as they are encountered this method formats the number as entered and
+   *     not "as you type" anymore. Full width digits and Arabic-indic digits are allowed, and will
+   *     be shown as they are.
    * @return  the partially formatted phone number.
    */
   public String inputDigit(char nextChar) {
@@ -236,9 +250,10 @@ public class AsYouTypeFormatter {
   }
 
   /**
-   * Same as inputDigit, but remembers the position where nextChar is inserted, so that it could be
-   * retrieved later by using getRememberedPosition(). The remembered position will be automatically
-   * adjusted if additional formatting characters are later inserted/removed in front of nextChar.
+   * Same as {@link #inputDigit}, but remembers the position where {@code nextChar} is inserted, so
+   * that it can be retrieved later by using {@link #getRememberedPosition}. The remembered
+   * position will be automatically adjusted if additional formatting characters are later
+   * inserted/removed in front of {@code nextChar}.
    */
   public String inputDigitAndRememberPosition(char nextChar) {
     currentOutput = inputDigitWithOptionToRememberPosition(nextChar, true);
@@ -265,29 +280,29 @@ public class AsYouTypeFormatter {
     // We start to attempt to format only when at least MIN_LEADING_DIGITS_LENGTH digits (the plus
     // sign is counted as a digit as well for this purpose) have been entered.
     switch (accruedInputWithoutFormatting.length()) {
-      case 0: // this is the case where the first few inputs are neither digits nor the plus sign.
+      case 0:
       case 1:
       case 2:
         return accruedInput.toString();
       case 3:
         if (attemptToExtractIdd()) {
-          isExpectingCountryCode = true;
+          isExpectingCountryCallingCode = true;
         } else {  // No IDD or plus sign is found, must be entering in national format.
           removeNationalPrefixFromNationalNumber();
           return attemptToChooseFormattingPattern();
         }
       case 4:
       case 5:
-        if (isExpectingCountryCode) {
-          if (attemptToExtractCountryCode()) {
-            isExpectingCountryCode = false;
+        if (isExpectingCountryCallingCode) {
+          if (attemptToExtractCountryCallingCode()) {
+            isExpectingCountryCallingCode = false;
           }
           return prefixBeforeNationalNumber + nationalNumber.toString();
         }
-      // We make a last attempt to extract a country code at the 6th digit because the maximum
-      // length of IDD and country code are both 3.
+      // We make a last attempt to extract a country calling code at the 6th digit because the
+      // maximum length of IDD and country calling code are both 3.
       case 6:
-        if (isExpectingCountryCode && !attemptToExtractCountryCode()) {
+        if (isExpectingCountryCallingCode && !attemptToExtractCountryCallingCode()) {
           ableToFormat = false;
           return accruedInput.toString();
         }
@@ -326,22 +341,19 @@ public class AsYouTypeFormatter {
 
   /**
    * Returns the current position in the partially formatted phone number of the character which was
-   * previously passed in as the parameter of inputDigitAndRememberPosition().
+   * previously passed in as the parameter of {@link #inputDigitAndRememberPosition}.
    */
   public int getRememberedPosition() {
     if (!ableToFormat) {
       return originalPosition;
     }
     int accruedInputIndex = 0, currentOutputIndex = 0;
-    int currentOutputLength = currentOutput.length();
-    while (accruedInputIndex < positionToRemember && currentOutputIndex < currentOutputLength) {
+    while (accruedInputIndex < positionToRemember && currentOutputIndex < currentOutput.length()) {
       if (accruedInputWithoutFormatting.charAt(accruedInputIndex) ==
           currentOutput.charAt(currentOutputIndex)) {
         accruedInputIndex++;
-        currentOutputIndex++;
-      } else {
-        currentOutputIndex++;
       }
+      currentOutputIndex++;
     }
     return currentOutputIndex;
   }
@@ -384,6 +396,8 @@ public class AsYouTypeFormatter {
       prefixBeforeNationalNumber.append("1 ");
       isInternationalFormatting = true;
     } else if (currentMetaData.hasNationalPrefix()) {
+      Pattern nationalPrefixForParsing =
+        regexCache.getPatternForRegex(currentMetaData.getNationalPrefixForParsing());
       Matcher m = nationalPrefixForParsing.matcher(nationalNumber);
       if (m.lookingAt()) {
         // When the national prefix is detected, we use international formatting rules instead of
@@ -405,14 +419,17 @@ public class AsYouTypeFormatter {
    *     defaultCountry.
    */
   private boolean attemptToExtractIdd() {
+    Pattern internationalPrefix =
+        regexCache.getPatternForRegex("\\" + PhoneNumberUtil.PLUS_SIGN + "|" +
+            currentMetaData.getInternationalPrefix());
     Matcher iddMatcher = internationalPrefix.matcher(accruedInputWithoutFormatting);
     if (iddMatcher.lookingAt()) {
       isInternationalFormatting = true;
-      int startOfCountryCode = iddMatcher.end();
+      int startOfCountryCallingCode = iddMatcher.end();
       nationalNumber.setLength(0);
-      nationalNumber.append(accruedInputWithoutFormatting.substring(startOfCountryCode));
+      nationalNumber.append(accruedInputWithoutFormatting.substring(startOfCountryCallingCode));
       prefixBeforeNationalNumber.append(
-          accruedInputWithoutFormatting.substring(0, startOfCountryCode));
+          accruedInputWithoutFormatting.substring(0, startOfCountryCallingCode));
       if (accruedInputWithoutFormatting.charAt(0) != PhoneNumberUtil.PLUS_SIGN) {
         prefixBeforeNationalNumber.append(" ");
       }
@@ -422,41 +439,41 @@ public class AsYouTypeFormatter {
   }
 
   /**
-   * Extracts country code from the beginning of nationalNumber to prefixBeforeNationalNumber when
-   * they are available, and places the remaining input into nationalNumber.
+   * Extracts the country calling code from the beginning of nationalNumber to
+   * prefixBeforeNationalNumber when they are available, and places the remaining input into
+   * nationalNumber.
    *
-   * @return  true when a valid country code can be found.
+   * @return  true when a valid country calling code can be found.
    */
-  private boolean attemptToExtractCountryCode() {
+  private boolean attemptToExtractCountryCallingCode() {
     if (nationalNumber.length() == 0) {
       return false;
     }
-    StringBuffer numberWithoutCountryCode = new StringBuffer();
-    int countryCode = phoneUtil.extractCountryCode(nationalNumber, numberWithoutCountryCode);
+    StringBuilder numberWithoutCountryCallingCode = new StringBuilder();
+    int countryCode = phoneUtil.extractCountryCode(nationalNumber, numberWithoutCountryCallingCode);
     if (countryCode == 0) {
       return false;
-    } else {
-      nationalNumber.setLength(0);
-      nationalNumber.append(numberWithoutCountryCode);
-      String newRegionCode = phoneUtil.getRegionCodeForCountryCode(countryCode);
-      if (!newRegionCode.equals(defaultCountry)) {
-        initializeCountrySpecificInfo(newRegionCode);
-      }
-      String countryCodeString = Integer.toString(countryCode);
-      prefixBeforeNationalNumber.append(countryCodeString).append(" ");
     }
+    nationalNumber.setLength(0);
+    nationalNumber.append(numberWithoutCountryCallingCode);
+    String newRegionCode = phoneUtil.getRegionCodeForCountryCode(countryCode);
+    if (newRegionCode != defaultCountry) {
+      currentMetaData = getMetadataForRegion(newRegionCode);
+    }
+    String countryCodeString = Integer.toString(countryCode);
+    prefixBeforeNationalNumber.append(countryCodeString).append(" ");
     return true;
   }
 
   // Accrues digits and the plus sign to accruedInputWithoutFormatting for later use. If nextChar
   // contains a digit in non-ASCII format (e.g. the full-width version of digits), it is first
   // normalized to the ASCII version. The return value is nextChar itself, or its normalized
-  // version, if nextChar is a digit in non-ASCII format.
+  // version, if nextChar is a digit in non-ASCII format. This method assumes its input is either a
+  // digit or the plus sign.
   private char normalizeAndAccrueDigitsAndPlusSign(char nextChar, boolean rememberPosition) {
     if (nextChar == PhoneNumberUtil.PLUS_SIGN) {
       accruedInputWithoutFormatting.append(nextChar);
-    }
-    if (PhoneNumberUtil.DIGIT_MAPPINGS.containsKey(nextChar)) {
+    } else {
       nextChar = PhoneNumberUtil.DIGIT_MAPPINGS.get(nextChar);
       accruedInputWithoutFormatting.append(nextChar);
       nationalNumber.append(nextChar);

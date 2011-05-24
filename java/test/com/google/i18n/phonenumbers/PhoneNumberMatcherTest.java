@@ -28,7 +28,6 @@ import java.util.NoSuchElementException;
 
 /**
  * Tests for {@link PhoneNumberMatcher}. This only tests basic functionality based on test metadata.
- * See {@link PhoneNumberMatcherRegressionTest} for regression tests.
  *
  * @author Tom Hofmann
  * @see PhoneNumberUtilTest {@link PhoneNumberUtilTest} for the origin of the test data
@@ -196,6 +195,49 @@ public class PhoneNumberMatcherTest extends TestCase {
     for (int i = 8; i <= 19; i++) {
       assertEqualRange(text, i, 19, 28);
     }
+  }
+
+  public void testMatchWithSurroundingZipcodes() throws Exception {
+    String number = "415-666-7777";
+    String zipPreceding = "My address is CA 34215. " + number + " is my number.";
+    PhoneNumber expectedResult = phoneUtil.parse(number, "US");
+
+    Iterator<PhoneNumberMatch> iterator = phoneUtil.findNumbers(zipPreceding, "US").iterator();
+    PhoneNumberMatch match = iterator.hasNext() ? iterator.next() : null;
+    assertNotNull("Did not find a number in '" + zipPreceding + "'; expected " + number, match);
+    assertEquals(expectedResult, match.number());
+    assertEquals(number, match.rawString());
+
+    // Now repeat, but this time the phone number has spaces in it. It should still be found.
+    number = "(415) 666 7777";
+
+    String zipFollowing = "My number is " + number + ". 34215 is my zip-code.";
+    iterator = phoneUtil.findNumbers(zipFollowing, "US").iterator();
+
+    PhoneNumberMatch matchWithSpaces = iterator.hasNext() ? iterator.next() : null;
+    assertNotNull("Did not find a number in '" + zipFollowing + "'; expected " + number,
+                  matchWithSpaces);
+    assertEquals(expectedResult, matchWithSpaces.number());
+    assertEquals(number, matchWithSpaces.rawString());
+  }
+
+  public void testNonMatchingBracketsAreInvalid() throws Exception {
+    // The digits up to the ", " form a valid US number, but it shouldn't be matched as one since
+    // there was a non-matching bracket present.
+    assertTrue(hasNoMatches(phoneUtil.findNumbers(
+        "80.585 [79.964, 81.191]", "US")));
+
+    // The trailing "]" is thrown away before parsing, so the resultant number, while a valid US
+    // number, does not have matching brackets.
+    assertTrue(hasNoMatches(phoneUtil.findNumbers(
+        "80.585 [79.964]", "US")));
+
+    assertTrue(hasNoMatches(phoneUtil.findNumbers(
+        "80.585 ((79.964)", "US")));
+
+    // This case has too many sets of brackets to be valid.
+    assertTrue(hasNoMatches(phoneUtil.findNumbers(
+        "(80).(585) (79).(9)64", "US")));
   }
 
   public void testNoMatchIfRegionIsNull() throws Exception {
@@ -417,7 +459,7 @@ public class PhoneNumberMatcherTest extends TestCase {
   }
 
   /**
-   * Tests numbers found by {@link PhoneNumberUtil#find(CharSequence, String)} in various
+   * Tests numbers found by {@link PhoneNumberUtil#findNumbers(CharSequence, String)} in various
    * textual contexts.
    *
    * @param number the number to test and the corresponding region code to use
@@ -453,7 +495,18 @@ public class PhoneNumberMatcherTest extends TestCase {
         "As quoted by Alfonso 12-15 (2009), you may call me at ", ""));
     contextPairs.add(new NumberContext(
         "As quoted by Alfonso et al. 12-15 (2009), you may call me at ", ""));
-         // with a postfix stripped off as it looks like the start of another number
+    // With dates, written in the American style.
+    contextPairs.add(new NumberContext(
+        "As I said on 03/10/2011, you may call me at ", ""));
+    contextPairs.add(new NumberContext(
+        "As I said on 03/27/2011, you may call me at ", ""));
+    contextPairs.add(new NumberContext(
+        "As I said on 31/8/2011, you may call me at ", ""));
+    contextPairs.add(new NumberContext(
+        "As I said on 1/12/2011, you may call me at ", ""));
+    contextPairs.add(new NumberContext(
+        "I was born on 10/12/82. Please call me at ", ""));
+    // With a postfix stripped off as it looks like the start of another number
     contextPairs.add(new NumberContext("Call ", "/x12 more"));
 
     doTestInContext(number, defaultCountry, contextPairs, Leniency.POSSIBLE);
@@ -508,7 +561,7 @@ public class PhoneNumberMatcherTest extends TestCase {
   private void ensureTermination(String text, String defaultCountry, Leniency leniency) {
     for (int index = 0; index <= text.length(); index++) {
       String sub = text.substring(index);
-      StringBuffer matches = new StringBuffer();
+      StringBuilder matches = new StringBuilder();
       // Iterates over all matches.
       for (PhoneNumberMatch match :
            phoneUtil.findNumbers(sub, defaultCountry, leniency, Long.MAX_VALUE)) {

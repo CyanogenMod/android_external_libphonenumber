@@ -132,8 +132,9 @@ public class CountryCodeToRegionCodeMap {
     listWithRegionCode.add("SE");
     countryCodeToRegionCodeMap.put(46, listWithRegionCode);
 
-    listWithRegionCode = new ArrayList<String>(1);
+    listWithRegionCode = new ArrayList<String>(2);
     listWithRegionCode.add("NO");
+    listWithRegionCode.add("SJ");
     countryCodeToRegionCodeMap.put(47, listWithRegionCode);
 
     listWithRegionCode = new ArrayList<String>(1);
@@ -180,8 +181,10 @@ public class CountryCodeToRegionCodeMap {
     listWithRegionCode.add("MY");
     countryCodeToRegionCodeMap.put(60, listWithRegionCode);
 
-    listWithRegionCode = new ArrayList<String>(1);
+    listWithRegionCode = new ArrayList<String>(3);
     listWithRegionCode.add("AU");
+    listWithRegionCode.add("CC");
+    listWithRegionCode.add("CX");
     countryCodeToRegionCodeMap.put(61, listWithRegionCode);
 
     listWithRegionCode = new ArrayList<String>(1);
@@ -514,8 +517,9 @@ public class CountryCodeToRegionCodeMap {
     listWithRegionCode.add("CY");
     countryCodeToRegionCodeMap.put(357, listWithRegionCode);
 
-    listWithRegionCode = new ArrayList<String>(1);
+    listWithRegionCode = new ArrayList<String>(2);
     listWithRegionCode.add("FI");
+    listWithRegionCode.add("AX");
     countryCodeToRegionCodeMap.put(358, listWithRegionCode);
 
     listWithRegionCode = new ArrayList<String>(1);
