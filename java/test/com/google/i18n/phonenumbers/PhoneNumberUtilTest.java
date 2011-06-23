@@ -145,8 +145,8 @@ public class PhoneNumberUtilTest extends TestCase {
     assertTrue(metadata.hasNationalPrefix());
     assertEquals(2, metadata.numberFormatSize());
     assertEquals("(\\d{3})(\\d{3})(\\d{4})",
-                 metadata.getNumberFormat(0).getPattern());
-    assertEquals("$1 $2 $3", metadata.getNumberFormat(0).getFormat());
+                 metadata.getNumberFormat(1).getPattern());
+    assertEquals("$1 $2 $3", metadata.getNumberFormat(1).getFormat());
     assertEquals("[13-9]\\d{9}|2[0-35-9]\\d{8}",
                  metadata.getGeneralDesc().getNationalNumberPattern());
     assertEquals("\\d{7}(?:\\d{3})?", metadata.getGeneralDesc().getPossibleNumberPattern());
@@ -288,6 +288,13 @@ public class PhoneNumberUtilTest extends TestCase {
     // CS is an invalid region, so we have no data for it.
     assertNull(phoneUtil.getExampleNumberForType(RegionCode.CS,
                                                  PhoneNumberUtil.PhoneNumberType.MOBILE));
+  }
+
+  public void testConvertAlphaCharactersInNumber() {
+    String input = "1800-ABC-DEF";
+    // Alpha chars are converted to digits; everything else is left untouched.
+    String expectedOutput = "1800-222-333";
+    assertEquals(expectedOutput, PhoneNumberUtil.convertAlphaCharactersInNumber(input));
   }
 
   public void testNormaliseRemovePunctuation() {
@@ -813,7 +820,6 @@ public class PhoneNumberUtilTest extends TestCase {
     // This number is valid for the Bahamas, but is not a valid US number.
     assertTrue(phoneUtil.isValidNumber(BS_NUMBER));
     assertTrue(phoneUtil.isValidNumberForRegion(BS_NUMBER, RegionCode.BS));
-    assertTrue(phoneUtil.isValidNumberForRegion(BS_NUMBER, "bs"));
     assertFalse(phoneUtil.isValidNumberForRegion(BS_NUMBER, RegionCode.US));
     PhoneNumber bsInvalidNumber =
         new PhoneNumber().setCountryCode(1).setNationalNumber(2421232345L);
@@ -878,7 +884,6 @@ public class PhoneNumberUtilTest extends TestCase {
   public void testGetCountryCodeForRegion() {
     assertEquals(1, phoneUtil.getCountryCodeForRegion(RegionCode.US));
     assertEquals(64, phoneUtil.getCountryCodeForRegion(RegionCode.NZ));
-    assertEquals(64, phoneUtil.getCountryCodeForRegion("nz"));
     assertEquals(0, phoneUtil.getCountryCodeForRegion(null));
     assertEquals(0, phoneUtil.getCountryCodeForRegion(RegionCode.ZZ));
     // CS is already deprecated so the library doesn't support it.
@@ -904,7 +909,6 @@ public class PhoneNumberUtilTest extends TestCase {
   public void testIsNANPACountry() {
     assertTrue(phoneUtil.isNANPACountry(RegionCode.US));
     assertTrue(phoneUtil.isNANPACountry(RegionCode.BS));
-    assertTrue(phoneUtil.isNANPACountry("bs"));
   }
 
   public void testIsPossibleNumber() {
@@ -921,7 +925,6 @@ public class PhoneNumberUtilTest extends TestCase {
     assertTrue(phoneUtil.isPossibleNumber("(020) 7031 3000", RegionCode.GB));
     assertTrue(phoneUtil.isPossibleNumber("7031 3000", RegionCode.GB));
     assertTrue(phoneUtil.isPossibleNumber("3331 6005", RegionCode.NZ));
-    assertTrue(phoneUtil.isPossibleNumber("3331 6005", "nz"));
   }
 
   public void testIsPossibleNumberWithReason() {
@@ -1037,6 +1040,9 @@ public class PhoneNumberUtilTest extends TestCase {
     // Alpha numbers.
     assertTrue(PhoneNumberUtil.isViablePhoneNumber("0800-4-pizza"));
     assertTrue(PhoneNumberUtil.isViablePhoneNumber("0800-4-PIZZA"));
+  }
+
+  public void testIsViablePhoneNumberNonAscii() {
     // Only one or two digits before possible punctuation followed by more digits.
     assertTrue(PhoneNumberUtil.isViablePhoneNumber("1\u300034"));
     assertFalse(PhoneNumberUtil.isViablePhoneNumber("1\u30003+4"));
@@ -1296,7 +1302,6 @@ public class PhoneNumberUtilTest extends TestCase {
   public void testParseNationalNumber() throws Exception {
     // National prefix attached.
     assertEquals(NZ_NUMBER, phoneUtil.parse("033316005", RegionCode.NZ));
-    assertEquals(NZ_NUMBER, phoneUtil.parse("033316005", "nz"));
     assertEquals(NZ_NUMBER, phoneUtil.parse("33316005", RegionCode.NZ));
     // National prefix attached and some formatting present.
     assertEquals(NZ_NUMBER, phoneUtil.parse("03-331 6005", RegionCode.NZ));
@@ -1352,6 +1357,9 @@ public class PhoneNumberUtilTest extends TestCase {
     assertEquals(US_NUMBER, phoneUtil.parse("0~01-650-253-0000", RegionCode.PL));
     // Using "++" at the start.
     assertEquals(US_NUMBER, phoneUtil.parse("++1 (650) 253-0000", RegionCode.PL));
+  }
+
+  public void testParseNonAscii() throws Exception {
     // Using a full-width plus sign.
     assertEquals(US_NUMBER, phoneUtil.parse("\uFF0B1 (650) 253-0000", RegionCode.SG));
     // The whole number, including punctuation, is here represented in full-width form.
@@ -1364,6 +1372,11 @@ public class PhoneNumberUtilTest extends TestCase {
                                             "\u3000\uFF12\uFF15\uFF13\u30FC\uFF10\uFF10\uFF10" +
                                             "\uFF10",
                                             RegionCode.SG));
+
+    // Using a very strange decimal digit range (Mongolian digits).
+    assertEquals(US_NUMBER, phoneUtil.parse("\u1811 \u1816\u1815\u1810 " +
+                                            "\u1812\u1815\u1813 \u1810\u1810\u1810\u1810",
+                                            RegionCode.US));
   }
 
   public void testParseWithLeadingZero() throws Exception {
