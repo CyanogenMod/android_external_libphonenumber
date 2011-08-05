@@ -202,7 +202,7 @@ public class PhoneNumberUtil {
       Arrays.toString(ALPHA_MAPPINGS.keySet().toArray()).replaceAll("[, \\[\\]]", "") +
       Arrays.toString(ALPHA_MAPPINGS.keySet().toArray()).toLowerCase().replaceAll("[, \\[\\]]", "");
   static final String PLUS_CHARS = "+\uFF0B";
-  private static final Pattern PLUS_CHARS_PATTERN = Pattern.compile("[" + PLUS_CHARS + "]+");
+  static final Pattern PLUS_CHARS_PATTERN = Pattern.compile("[" + PLUS_CHARS + "]+");
   private static final Pattern SEPARATOR_PATTERN = Pattern.compile("[" + VALID_PUNCTUATION + "]+");
   private static final Pattern CAPTURING_DIGIT_PATTERN = Pattern.compile("(" + DIGITS + ")");
 
@@ -213,7 +213,7 @@ public class PhoneNumberUtil {
   // not include other punctuation, as this will be stripped later during parsing and is of no
   // information value when parsing a number.
   private static final String VALID_START_CHAR = "[" + PLUS_CHARS + DIGITS + "]";
-  static final Pattern VALID_START_CHAR_PATTERN = Pattern.compile(VALID_START_CHAR);
+  private static final Pattern VALID_START_CHAR_PATTERN = Pattern.compile(VALID_START_CHAR);
 
   // Regular expression of characters typically used to start a second phone number for the purposes
   // of parsing. This allows us to strip off parts of the number that are actually the start of
