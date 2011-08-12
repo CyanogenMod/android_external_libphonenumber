@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.google.i18n.phonenumbers;
+package com.android.i18n.phonenumbers;
 
-import com.google.i18n.phonenumbers.Phonemetadata.NumberFormat;
-import com.google.i18n.phonenumbers.Phonemetadata.PhoneMetadata;
+import com.android.i18n.phonenumbers.Phonemetadata.NumberFormat;
+import com.android.i18n.phonenumbers.Phonemetadata.PhoneMetadata;
 
 import java.util.ArrayList;
 import java.util.Iterator;

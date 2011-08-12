@@ -2,3 +2,5 @@ URL: http://code.google.com/p/libphonenumber/
 Version: 3.7.1 (r303)
 License: Apache 2
 Description: Google Phone Number Library.
+Local Modification:
+ * Package renamed from com.google.i18n.phonenumbers to com.android.i18n.phonenumbers

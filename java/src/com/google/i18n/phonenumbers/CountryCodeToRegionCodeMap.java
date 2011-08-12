@@ -18,7 +18,7 @@
  * Please don't modify it directly.
  */
 
-package com.google.i18n.phonenumbers;
+package com.android.i18n.phonenumbers;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.i18n.phonenumbers;
+package com.android.i18n.phonenumbers;
 
 /**
  * Generic exception class for errors encountered when parsing phone numbers.

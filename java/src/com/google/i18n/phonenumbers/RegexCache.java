@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.i18n.phonenumbers;
+package com.android.i18n.phonenumbers;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

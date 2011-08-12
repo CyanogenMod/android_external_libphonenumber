@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.google.i18n.phonenumbers;
+package com.android.i18n.phonenumbers;
 
-import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
+import com.android.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 import junit.framework.TestCase;
 

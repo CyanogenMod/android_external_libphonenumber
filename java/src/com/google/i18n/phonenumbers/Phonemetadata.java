@@ -20,7 +20,7 @@
  * for detailed descriptions of the meaning of each field.
  */
 
-package com.google.i18n.phonenumbers;
+package com.android.i18n.phonenumbers;
 
 import java.io.Externalizable;
 import java.io.IOException;

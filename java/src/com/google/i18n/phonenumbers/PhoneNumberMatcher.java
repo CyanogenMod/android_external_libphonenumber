@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.google.i18n.phonenumbers;
+package com.android.i18n.phonenumbers;
 
-import com.google.i18n.phonenumbers.PhoneNumberUtil.Leniency;
-import com.google.i18n.phonenumbers.Phonenumber.PhoneNumber;
+import com.android.i18n.phonenumbers.PhoneNumberUtil.Leniency;
+import com.android.i18n.phonenumbers.Phonenumber.PhoneNumber;
 
 import java.lang.Character.UnicodeBlock;
 import java.util.Iterator;
