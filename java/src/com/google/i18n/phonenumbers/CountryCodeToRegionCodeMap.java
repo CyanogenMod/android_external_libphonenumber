@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.
+ * Copyright (C) 2010 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -432,9 +432,8 @@ public class CountryCodeToRegionCodeMap {
     listWithRegionCode.add("MG");
     countryCodeToRegionCodeMap.put(261, listWithRegionCode);
 
-    listWithRegionCode = new ArrayList<String>(3);
+    listWithRegionCode = new ArrayList<String>(2);
     listWithRegionCode.add("RE");
-    listWithRegionCode.add("TF");
     listWithRegionCode.add("YT");
     countryCodeToRegionCodeMap.put(262, listWithRegionCode);
 

@@ -50,11 +50,7 @@ public class PhoneNumberOfflineGeocoder {
   // loaded.
   private Map<String, AreaCodeMap> availablePhonePrefixMaps = new HashMap<String, AreaCodeMap>();
 
-  /**
-   * For testing purposes, we allow the phone number util variable to be injected.
-   *
-   * @VisibleForTesting
-   */
+  // @VisibleForTesting
   PhoneNumberOfflineGeocoder(String phonePrefixDataDirectory) {
     this.phonePrefixDataDirectory = phonePrefixDataDirectory;
     loadMappingFileProvider();
@@ -79,18 +75,18 @@ public class PhoneNumberOfflineGeocoder {
       return null;
     }
     if (!availablePhonePrefixMaps.containsKey(fileName)) {
-      loadAreaCodeMapFromFile(fileName, countryCallingCode);
+      loadAreaCodeMapFromFile(fileName);
     }
     return availablePhonePrefixMaps.get(fileName);
   }
 
-  private void loadAreaCodeMapFromFile(String fileName, int countryCallingCode) {
+  private void loadAreaCodeMapFromFile(String fileName) {
     InputStream source =
         PhoneNumberOfflineGeocoder.class.getResourceAsStream(phonePrefixDataDirectory + fileName);
     ObjectInputStream in;
     try {
       in = new ObjectInputStream(source);
-      AreaCodeMap map = new AreaCodeMap(countryCallingCode);
+      AreaCodeMap map = new AreaCodeMap();
       map.readExternal(in);
       availablePhonePrefixMaps.put(fileName, map);
     } catch (IOException e) {
@@ -115,19 +111,6 @@ public class PhoneNumberOfflineGeocoder {
   }
 
   /**
-   * Preload the data file for the given language and country calling code, so that a future lookup
-   * for this language and country calling code will not incur any file loading.
-   *
-   * @param locale  specifies the language of the data file to load
-   * @param countryCallingCode   specifies the country calling code of phone numbers that are
-   *     contained by the file to be loaded
-   */
-  public void loadDataFile(Locale locale, int countryCallingCode) {
-    instance.getPhonePrefixDescriptions(countryCallingCode, locale.getLanguage(), "",
-        locale.getCountry());
-  }
-
-  /**
    * Returns the customary display name in the given language for the given territory the phone
    * number is from.
    */
@@ -140,22 +123,40 @@ public class PhoneNumberOfflineGeocoder {
   /**
    * Returns a text description for the given language code for the given phone number. The
    * description might consist of the name of the country where the phone number is from and/or the
-   * name of the geographical area the phone number is from.
+   * name of the geographical area the phone number is from. This method assumes the validity of the
+   * number passed in has already been checked.
+   *
+   * @param number  a valid phone number for which we want to get a text description
+   * @param languageCode  the language code for which the description should be written
+   * @return  a text description for the given language code for the given phone number
+   */
+  public String getDescriptionForValidNumber(PhoneNumber number, Locale languageCode) {
+    String langStr = languageCode.getLanguage();
+    String scriptStr = "";  // No script is specified
+    String regionStr = languageCode.getCountry();
+
+    String areaDescription =
+        getAreaDescriptionForNumber(number, langStr, scriptStr, regionStr);
+    return (areaDescription.length() > 0)
+        ? areaDescription : getCountryNameForNumber(number, languageCode);
+  }
+
+  /**
+   * Returns a text description for the given language code for the given phone number. The
+   * description might consist of the name of the country where the phone number is from and/or the
+   * name of the geographical area the phone number is from. This method explictly checkes the
+   * validity of the number passed in.
    *
    * @param number  the phone number for which we want to get a text description
    * @param languageCode  the language code for which the description should be written
-   * @return  a text description for the given language code for the given phone number
+   * @return  a text description for the given language code for the given phone number, or empty
+   *     string if the number passed in is invalid
    */
   public String getDescriptionForNumber(PhoneNumber number, Locale languageCode) {
     if (!phoneUtil.isValidNumber(number)) {
       return "";
     }
-    String areaDescription =
-        getAreaDescriptionForNumber(
-            number, languageCode.getLanguage(), "",  // No script is specified.
-            languageCode.getCountry());
-    return (areaDescription.length() > 0)
-        ? areaDescription : getCountryNameForNumber(number, languageCode);
+    return getDescriptionForValidNumber(number, languageCode);
   }
 
   /**
@@ -171,8 +172,13 @@ public class PhoneNumberOfflineGeocoder {
    */
   private String getAreaDescriptionForNumber(
       PhoneNumber number, String lang, String script, String region) {
+    int countryCallingCode = number.getCountryCode();
+    // As the NANPA data is split into multiple files covering 3-digit areas, use a phone number
+    // prefix of 4 digits for NANPA instead, e.g. 1650.
+    int phonePrefix = (countryCallingCode != 1) ?
+        countryCallingCode : (1000 + (int) (number.getNationalNumber() / 10000000));
     AreaCodeMap phonePrefixDescriptions =
-        getPhonePrefixDescriptions(number.getCountryCode(), lang, script, region);
+        getPhonePrefixDescriptions(phonePrefix, lang, script, region);
     return (phonePrefixDescriptions != null) ? phonePrefixDescriptions.lookup(number) : "";
   }
 }

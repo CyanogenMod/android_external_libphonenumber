@@ -279,7 +279,7 @@ public class AsYouTypeFormatter {
     if (rememberPosition) {
       originalPosition = accruedInput.length();
     }
-    // We do formatting on-the-fly only when each character entered is either a digit, or a plus 
+    // We do formatting on-the-fly only when each character entered is either a digit, or a plus
     // sign (accepted at the start of the number only).
     if (!isDigitOrLeadingPlusSign(nextChar)) {
       ableToFormat = false;
@@ -476,7 +476,7 @@ public class AsYouTypeFormatter {
     nationalNumber.setLength(0);
     nationalNumber.append(numberWithoutCountryCallingCode);
     String newRegionCode = phoneUtil.getRegionCodeForCountryCode(countryCode);
-    if (newRegionCode != defaultCountry) {
+    if (!newRegionCode.equals(defaultCountry)) {
       currentMetaData = getMetadataForRegion(newRegionCode);
     }
     String countryCodeString = Integer.toString(countryCode);
