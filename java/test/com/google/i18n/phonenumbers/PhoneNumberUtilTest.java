@@ -98,6 +98,11 @@ public class PhoneNumberUtilTest extends TestCase {
       new PhoneNumber().setCountryCode(1).setNationalNumber(650253000L);
   private static final PhoneNumber US_TOLLFREE =
       new PhoneNumber().setCountryCode(1).setNationalNumber(8002530000L);
+  private static final PhoneNumber US_SPOOF =
+      new PhoneNumber().setCountryCode(1).setNationalNumber(0L);
+  private static final PhoneNumber US_SPOOF_WITH_RAW_INPUT =
+      new PhoneNumber().setCountryCode(1).setNationalNumber(0L)
+          .setRawInput("000-000-0000");
 
   // Class containing string constants of region codes for easier testing.
   private static class RegionCode {
@@ -345,6 +350,11 @@ public class PhoneNumberUtilTest extends TestCase {
     assertEquals("900 253 0000", phoneUtil.format(US_PREMIUM, PhoneNumberFormat.NATIONAL));
     assertEquals("+1 900 253 0000", phoneUtil.format(US_PREMIUM, PhoneNumberFormat.INTERNATIONAL));
     assertEquals("+1-900-253-0000", phoneUtil.format(US_PREMIUM, PhoneNumberFormat.RFC3966));
+    // Numbers with all zeros in the national number part will be formatted by using the raw_input
+    // if that is available no matter which format is specified.
+    assertEquals("000-000-0000",
+                 phoneUtil.format(US_SPOOF_WITH_RAW_INPUT, PhoneNumberFormat.NATIONAL));
+    assertEquals("0", phoneUtil.format(US_SPOOF, PhoneNumberFormat.NATIONAL));
   }
 
   public void testFormatBSNumber() {

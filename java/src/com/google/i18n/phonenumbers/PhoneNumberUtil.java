@@ -978,6 +978,12 @@ public class PhoneNumberUtil {
    * @return  the formatted phone number
    */
   public String format(PhoneNumber number, PhoneNumberFormat numberFormat) {
+    if (number.getNationalNumber() == 0 && number.hasRawInput()) {
+      String rawInput = number.getRawInput();
+      if (rawInput.length() > 0) {
+        return rawInput;
+      }
+    }
     StringBuilder formattedNumber = new StringBuilder(20);
     format(number, numberFormat, formattedNumber);
     return formattedNumber.toString();
