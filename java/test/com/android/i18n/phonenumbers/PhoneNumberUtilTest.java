@@ -42,7 +42,7 @@ public class PhoneNumberUtilTest extends TestCase {
   private PhoneNumberUtil phoneUtil;
   // This is used by BuildMetadataProtoFromXml.
   static final String TEST_META_DATA_FILE_PREFIX =
-      "/com/google/i18n/phonenumbers/data/PhoneNumberMetadataProtoForTesting";
+      "/com/android/i18n/phonenumbers/data/PhoneNumberMetadataProtoForTesting";
 
   // Set up some test numbers to re-use.
   private static final PhoneNumber ALPHA_NUMERIC_NUMBER =

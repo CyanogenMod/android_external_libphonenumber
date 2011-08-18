@@ -63,7 +63,7 @@ public class PhoneNumberUtil {
   // The maximum length of the country calling code.
   static final int MAX_LENGTH_COUNTRY_CODE = 3;
   static final String META_DATA_FILE_PREFIX =
-      "/com/google/i18n/phonenumbers/data/PhoneNumberMetadataProto";
+      "/com/android/i18n/phonenumbers/data/PhoneNumberMetadataProto";
   private String currentFilePrefix = META_DATA_FILE_PREFIX;
   private static final Logger LOGGER = Logger.getLogger(PhoneNumberUtil.class.getName());
 

@@ -30,7 +30,7 @@ public class PhoneNumberOfflineGeocoderTest extends TestCase {
   private final PhoneNumberOfflineGeocoder geocoder =
       new PhoneNumberOfflineGeocoder(TEST_MAPPING_DATA_DIRECTORY);
   private static final String TEST_MAPPING_DATA_DIRECTORY =
-      "/com/google/i18n/phonenumbers/geocoding/testing_data/";
+      "/com/android/i18n/phonenumbers/geocoding/testing_data/";
 
   // Set up some test numbers to re-use.
   private static final PhoneNumber KO_NUMBER1 =

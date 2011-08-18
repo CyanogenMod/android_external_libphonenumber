@@ -36,7 +36,7 @@ import java.util.logging.Logger;
 public class PhoneNumberOfflineGeocoder {
   private static PhoneNumberOfflineGeocoder instance = null;
   private static final String MAPPING_DATA_DIRECTORY =
-      "/com/google/i18n/phonenumbers/geocoding/data/";
+      "/com/android/i18n/phonenumbers/geocoding/data/";
   private static final Logger LOGGER = Logger.getLogger(PhoneNumberOfflineGeocoder.class.getName());
 
   private final PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
