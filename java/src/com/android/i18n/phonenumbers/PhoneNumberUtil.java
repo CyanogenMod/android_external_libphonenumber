@@ -607,7 +607,7 @@ public class PhoneNumberUtil {
   private void loadMetadataForRegionFromFile(String filePrefix, String regionCode) {
     InputStream source =
         PhoneNumberUtil.class.getResourceAsStream(filePrefix + "_" + regionCode);
-    ObjectInputStream in;
+    ObjectInputStream in = null;
     try {
       in = new ObjectInputStream(source);
       PhoneMetadataCollection metadataCollection = new PhoneMetadataCollection();
@@ -617,6 +617,18 @@ public class PhoneNumberUtil {
       }
     } catch (IOException e) {
       LOGGER.log(Level.WARNING, e.toString());
+    } finally {
+      close(in);
+    }
+  }
+
+  private void close(InputStream in) {
+    if (in != null) {
+      try {
+        in.close();
+      } catch (IOException e) {
+        LOGGER.log(Level.WARNING, e.toString());
+      }
     }
   }
 
