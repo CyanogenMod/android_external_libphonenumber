@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc.
+ * Copyright (C) 2011 The Libphonenumber Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,6 +47,8 @@ public class PhoneNumberOfflineGeocoderTest extends TestCase {
       new PhoneNumber().setCountryCode(1).setNationalNumber(6509600000L);
   private static final PhoneNumber US_NUMBER3 =
       new PhoneNumber().setCountryCode(1).setNationalNumber(2128120000L);
+  private static final PhoneNumber US_NUMBER4 =
+      new PhoneNumber().setCountryCode(1).setNationalNumber(6174240000L);
   private static final PhoneNumber US_INVALID_NUMBER =
       new PhoneNumber().setCountryCode(1).setNationalNumber(123456789L);
   private static final PhoneNumber BS_NUMBER1 =
@@ -61,14 +63,19 @@ public class PhoneNumberOfflineGeocoderTest extends TestCase {
     // a result, the country name of United States in simplified Chinese is returned.
     assertEquals("\u7F8E\u56FD",
         geocoder.getDescriptionForNumber(US_NUMBER1, Locale.SIMPLIFIED_CHINESE));
-    assertEquals("Stati Uniti",
-        geocoder.getDescriptionForNumber(US_NUMBER1, Locale.ITALIAN));
     assertEquals("Bahamas",
         geocoder.getDescriptionForNumber(BS_NUMBER1, new Locale("en", "US")));
     assertEquals("Australia",
         geocoder.getDescriptionForNumber(AU_NUMBER, new Locale("en", "US")));
     assertEquals("", geocoder.getDescriptionForNumber(NUMBER_WITH_INVALID_COUNTRY_CODE,
                                                       new Locale("en", "US")));
+  }
+
+  public void testGetDescriptionForNumberWithMissingPrefix() {
+    // Test that the name of the country is returned when the number passed in is valid but not
+    // covered by the geocoding data file.
+    assertEquals("United States",
+        geocoder.getDescriptionForNumber(US_NUMBER4, new Locale("en", "US")));
   }
 
   public void testGetDescriptionForNumber_en_US() {
@@ -91,7 +98,21 @@ public class PhoneNumberOfflineGeocoderTest extends TestCase {
         geocoder.getDescriptionForNumber(KO_NUMBER1, Locale.KOREAN));
     assertEquals("\uC778\uCC9C",
         geocoder.getDescriptionForNumber(KO_NUMBER2, Locale.KOREAN));
-    assertEquals("\uC81C\uC8FC",
+  }
+
+  public void testGetDescriptionForFallBack() {
+    // No fallback, as the location name for the given phone number is available in the requested
+    // language.
+    assertEquals("Kalifornien",
+        geocoder.getDescriptionForNumber(US_NUMBER1, Locale.GERMAN));
+    // German falls back to English.
+    assertEquals("New York, NY",
+        geocoder.getDescriptionForNumber(US_NUMBER3, Locale.GERMAN));
+    // Italian falls back to English.
+    assertEquals("CA",
+        geocoder.getDescriptionForNumber(US_NUMBER1, Locale.ITALIAN));
+    // Korean doesn't fall back to English.
+    assertEquals("\uB300\uD55C\uBBFC\uAD6D",
         geocoder.getDescriptionForNumber(KO_NUMBER3, Locale.KOREAN));
   }
 

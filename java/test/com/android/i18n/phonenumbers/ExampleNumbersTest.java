@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc.
+ * Copyright (C) 2009 The Libphonenumber Authors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -165,5 +165,12 @@ public class ExampleNumbersTest extends TestCase {
       }
     }
     assertEquals(0, wrongTypeCases.size());
+  }
+
+  public void testEveryRegionHasAnExampleNumber() throws Exception {
+    for (String regionCode : phoneNumberUtil.getSupportedRegions()) {
+      PhoneNumber exampleNumber = phoneNumberUtil.getExampleNumber(regionCode);
+      assertNotNull("None found for region " + regionCode, exampleNumber);
+    }
   }
 }
