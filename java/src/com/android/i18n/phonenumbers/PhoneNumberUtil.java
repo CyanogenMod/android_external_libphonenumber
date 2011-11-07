@@ -1364,18 +1364,8 @@ public class PhoneNumberUtil {
    * @return  the national significant number of the PhoneNumber object passed in
    */
   public String getNationalSignificantNumber(PhoneNumber number) {
-    // The leading zero in the national (significant) number of an Italian phone number has a
-    // special meaning. Unlike the rest of the world, it indicates the number is a landline
-    // number. There have been plans to migrate landline numbers to start with the digit two since
-    // December 2000, but it has not yet happened.
-    // See http://en.wikipedia.org/wiki/%2B39 for more details.
-    // Other regions such as Cote d'Ivoire and Gabon use this for their mobile numbers.
-    StringBuilder nationalNumber = new StringBuilder(
-        (number.hasItalianLeadingZero() &&
-         number.isItalianLeadingZero() &&
-         isLeadingZeroPossible(number.getCountryCode()))
-        ? "0" : ""
-    );
+    // If a leading zero has been set, we prefix this now. Note this is not a national prefix.
+    StringBuilder nationalNumber = new StringBuilder(number.isItalianLeadingZero() ? "0" : "");
     nationalNumber.append(number.getNationalNumber());
     return nationalNumber.toString();
   }
