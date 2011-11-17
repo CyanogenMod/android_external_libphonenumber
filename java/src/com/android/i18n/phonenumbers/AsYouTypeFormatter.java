@@ -334,7 +334,7 @@ public class AsYouTypeFormatter {
           }
           return ableToFormat
              ? prefixBeforeNationalNumber + tempNationalNumber
-             : tempNationalNumber;
+             : accruedInput.toString();
         } else {
           return attemptToChooseFormattingPattern();
         }
@@ -402,7 +402,7 @@ public class AsYouTypeFormatter {
       }
       return ableToFormat
           ? prefixBeforeNationalNumber + tempNationalNumber
-          : tempNationalNumber;
+          : accruedInput.toString();
     } else {
       return prefixBeforeNationalNumber.toString();
     }
