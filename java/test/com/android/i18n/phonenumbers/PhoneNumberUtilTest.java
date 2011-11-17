@@ -716,6 +716,11 @@ public class PhoneNumberUtilTest extends TestCase {
 
     PhoneNumber number5 = phoneUtil.parse("+442087654321", RegionCode.GB);
     assertEquals("(020) 8765 4321", phoneUtil.formatInOriginalFormat(number5, RegionCode.GB));
+
+    // This number is valid, but we don't have a formatting pattern for it. Fall back to the raw
+    // input.
+    PhoneNumber number8 = phoneUtil.parseAndKeepRawInput("02-4567-8900", RegionCode.KR);
+    assertEquals("02-4567-8900", phoneUtil.formatInOriginalFormat(number8, RegionCode.KR));
   }
 
   public void testIsPremiumRate() {

@@ -1225,7 +1225,11 @@ public class PhoneNumberUtil {
    * @return  the formatted phone number in its original number format
    */
   public String formatInOriginalFormat(PhoneNumber number, String regionCallingFrom) {
-    if (number.hasRawInput() && !isValidNumber(number)) {
+    if (number.hasRawInput() &&
+        (!hasFormattingPatternForNumber(number) || !isValidNumber(number))) {
+      // We check if we have the formatting pattern because without that, we might format the number
+      // as a group without national prefix. We also want to check the validity of the number
+      // because we don't want to risk formatting the number if we don't really understand it.
       return number.getRawInput();
     }
     if (!number.hasCountryCodeSource()) {
@@ -1242,6 +1246,18 @@ public class PhoneNumberUtil {
       default:
         return format(number, PhoneNumberFormat.NATIONAL);
     }
+  }
+
+  private boolean hasFormattingPatternForNumber(PhoneNumber number) {
+    String phoneNumberRegion = getRegionCodeForCountryCode(number.getCountryCode());
+    PhoneMetadata metadata = getMetadataForRegion(phoneNumberRegion);
+    if (metadata == null) {
+      return false;
+    }
+    String nationalNumber = getNationalSignificantNumber(number);
+    NumberFormat formatRule =
+        chooseFormattingPatternForNumber(metadata.numberFormats(), nationalNumber);
+    return formatRule != null;
   }
 
   /**
@@ -1410,6 +1426,22 @@ public class PhoneNumberUtil {
           SEPARATOR_PATTERN.matcher(formattedNationalNumber).replaceAll("-");
     }
     return formattedNationalNumber;
+  }
+
+  private NumberFormat chooseFormattingPatternForNumber(List<NumberFormat> availableFormats,
+                                                        String nationalNumber) {
+    for (NumberFormat numFormat : availableFormats) {
+      int size = numFormat.leadingDigitsPatternSize();
+      if (size == 0 || regexCache.getPatternForRegex(
+              // We always use the last leading_digits_pattern, as it is the most detailed.
+              numFormat.getLeadingDigitsPattern(size - 1)).matcher(nationalNumber).lookingAt()) {
+        Matcher m = regexCache.getPatternForRegex(numFormat.getPattern()).matcher(nationalNumber);
+        if (m.matches()) {
+          return numFormat;
+        }
+      }
+    }
+    return null;
   }
 
   // Simple wrapper of formatAccordingToFormats for the common case of no carrier code.
