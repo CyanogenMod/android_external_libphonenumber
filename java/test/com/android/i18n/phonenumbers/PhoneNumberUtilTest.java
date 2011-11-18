@@ -730,6 +730,11 @@ public class PhoneNumberUtilTest extends TestCase {
     // When the raw input is unavailable, format as usual.
     PhoneNumber number7 = phoneUtil.parse("7345678901", RegionCode.US);
     assertEquals("734 567 8901", phoneUtil.formatInOriginalFormat(number7, RegionCode.US));
+
+    // This number is valid, but we don't have a formatting pattern for it. Fall back to the raw
+    // input.
+    PhoneNumber number8 = phoneUtil.parseAndKeepRawInput("02-4567-8900", RegionCode.KR);
+    assertEquals("02-4567-8900", phoneUtil.formatInOriginalFormat(number8, RegionCode.KR));
   }
 
   public void testIsPremiumRate() {

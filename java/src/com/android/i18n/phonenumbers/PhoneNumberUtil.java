@@ -1339,7 +1339,11 @@ public class PhoneNumberUtil {
    * @return  the formatted phone number in its original number format
    */
   public String formatInOriginalFormat(PhoneNumber number, String regionCallingFrom) {
-    if (number.hasRawInput() && !isValidNumber(number)) {
+    if (number.hasRawInput() &&
+        (!hasFormattingPatternForNumber(number) || !isValidNumber(number))) {
+      // We check if we have the formatting pattern because without that, we might format the number
+      // as a group without national prefix. We also want to check the validity of the number
+      // because we don't want to risk formatting the number if we don't really understand it.
       return number.getRawInput();
     }
     if (!number.hasCountryCodeSource()) {
@@ -1356,6 +1360,18 @@ public class PhoneNumberUtil {
       default:
         return format(number, PhoneNumberFormat.NATIONAL);
     }
+  }
+
+  private boolean hasFormattingPatternForNumber(PhoneNumber number) {
+    String phoneNumberRegion = getRegionCodeForCountryCode(number.getCountryCode());
+    PhoneMetadata metadata = getMetadataForRegion(phoneNumberRegion);
+    if (metadata == null) {
+      return false;
+    }
+    String nationalNumber = getNationalSignificantNumber(number);
+    NumberFormat formatRule =
+        chooseFormattingPatternForNumber(metadata.numberFormats(), nationalNumber);
+    return formatRule != null;
   }
 
   /**
