@@ -428,8 +428,7 @@ public class AsYouTypeFormatter {
     // number (excluding national prefix) have been entered.
     if (nationalNumber.length() >= MIN_LEADING_DIGITS_LENGTH) {
       getAvailableFormats(nationalNumber.substring(0, MIN_LEADING_DIGITS_LENGTH));
-      maybeCreateNewTemplate();
-      return inputAccruedNationalNumber();
+      return maybeCreateNewTemplate() ? inputAccruedNationalNumber() : accruedInput.toString();
     } else {
       return prefixBeforeNationalNumber + nationalNumber.toString();
     }
