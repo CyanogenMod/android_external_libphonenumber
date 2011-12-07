@@ -1247,17 +1247,29 @@ public class PhoneNumberUtil {
     if (!number.hasCountryCodeSource()) {
       return format(number, PhoneNumberFormat.NATIONAL);
     }
+    String formattedNumber;
     switch (number.getCountryCodeSource()) {
       case FROM_NUMBER_WITH_PLUS_SIGN:
-        return format(number, PhoneNumberFormat.INTERNATIONAL);
+        formattedNumber = format(number, PhoneNumberFormat.INTERNATIONAL);
+        break;
       case FROM_NUMBER_WITH_IDD:
-        return formatOutOfCountryCallingNumber(number, regionCallingFrom);
+        formattedNumber = formatOutOfCountryCallingNumber(number, regionCallingFrom);
+        break;
       case FROM_NUMBER_WITHOUT_PLUS_SIGN:
-        return format(number, PhoneNumberFormat.INTERNATIONAL).substring(1);
+        formattedNumber = format(number, PhoneNumberFormat.INTERNATIONAL).substring(1);
+        break;
       case FROM_DEFAULT_COUNTRY:
       default:
-        return format(number, PhoneNumberFormat.NATIONAL);
+        formattedNumber = format(number, PhoneNumberFormat.NATIONAL);
+        break;
     }
+    String rawInput = number.getRawInput();
+    // If no digit is inserted/removed/modified as a result of our formatting, we return the
+    // formatted phone number; otherwise we return the raw input the user entered.
+    return (formattedNumber != null &&
+            normalizeDigitsOnly(formattedNumber).equals(normalizeDigitsOnly(rawInput)))
+        ? formattedNumber
+        : rawInput;
   }
 
   private boolean hasFormattingPatternForNumber(PhoneNumber number) {
