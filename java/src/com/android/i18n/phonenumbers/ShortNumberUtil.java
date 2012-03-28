@@ -17,7 +17,6 @@
 package com.android.i18n.phonenumbers;
 
 import com.android.i18n.phonenumbers.Phonemetadata.PhoneMetadata;
-import com.android.i18n.phonenumbers.Phonemetadata.PhoneNumberDesc;
 
 import java.util.regex.Pattern;
 
