@@ -2027,6 +2027,10 @@ public class PhoneNumberUtil {
   // 0 if fullNumber doesn't start with a valid country calling code, and leaves nationalNumber
   // unmodified.
   int extractCountryCode(StringBuilder fullNumber, StringBuilder nationalNumber) {
+    if ((fullNumber.length() == 0) || (fullNumber.charAt(0) == '0')) {
+      // Country codes do not begin with a '0'.
+      return 0;
+    }
     int potentialCountryCode;
     int numberLength = fullNumber.length();
     for (int i = 1; i <= MAX_LENGTH_COUNTRY_CODE && i <= numberLength; i++) {
