@@ -1,3 +1,37 @@
+Jun 05, 2013: libphonenumber-5.6
+* Code changes:
+ - Fix for as-you-type-formatting bug affecting countries with no national prefix
+   formatting rule, such as China.
+* Metadata changes:
+ - New alternate formatting data for country calling code(s): 351
+ - Updated alternate formatting data for country calling code(s): 49
+ - Updated metadata for region code(s):
+   AS, BG, BH, BJ, BL, CD, CI, DE, DZ, EH, FJ, GF, GP, IN, KH, KZ, MA, MD, MF,
+   ML, MY, NG, PT, PY, TC, TJ, TT
+
+May 08, 2013: libphonenumber-5.5
+* Code changes:
+ - Changed internal initialization code and made more fields final.
+   Note that we now throw an exception if an attempt is made to set the
+   metadata more than once (which should only happen during testing).
+ - Fix problem with formatNumberForMobileDialing for HU and CL.
+* Metadata changes:
+ - Updated alternate formatting data for country calling code(s): 49
+ - Updated metadata for region code(s):
+   AM, BF, BR, CR, DE, MA, MG, MM, SA, TL, UA
+ - Updated geocoding data for country calling code(s): 374 (am, en, ru)
+
+Apr 19, 2013: libphonenumber-5.4.2
+* Metadata changes:
+ - Updated metadata for region code(s): BF, GA, IN, KR, MV, PH, SO, UA, US
+
+Mar 25, 2013: libphonenumber-5.4.1
+* Metadata changes:
+ - Updated metadata for region code(s): BF, BH, CR, EC, IR, MG, PF, TD, TN
+ - New geocoding data for country calling code(s): 374 (am, ru)
+ - Updated geocoding data for country calling code(s):
+   98 (en, fa), 358 (en, se), 374 (en)
+
 Mar 07, 2013: libphonenumber-5.4
 * Code changes:
  - Switch formatNumberForMobileDialing to prefer national format to international format when the
