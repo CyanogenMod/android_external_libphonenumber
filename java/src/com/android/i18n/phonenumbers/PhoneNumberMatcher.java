@@ -468,11 +468,16 @@ final class PhoneNumberMatcher implements Iterator<PhoneNumberMatch> {
       // Moves {@code fromIndex} forward.
       fromIndex += formattedNumberGroups[i].length();
       if (i == 0 && fromIndex < normalizedCandidate.length()) {
-        // We are at the position right after the NDC.
-        if (Character.isDigit(normalizedCandidate.charAt(fromIndex))) {
+        // We are at the position right after the NDC. We get the region used for formatting
+        // information based on the country code in the phone number, rather than the number itself,
+        // as we do not need to distinguish between different countries with the same country
+        // calling code and this is faster.
+        String region = util.getRegionCodeForCountryCode(number.getCountryCode());
+        if (util.getNddPrefixForRegion(region, true) != null &&
+            Character.isDigit(normalizedCandidate.charAt(fromIndex))) {
           // This means there is no formatting symbol after the NDC. In this case, we only
           // accept the number if there is no formatting symbol at all in the number, except
-          // for extensions.
+          // for extensions. This is only important for countries with national prefixes.
           String nationalSignificantNumber = util.getNationalSignificantNumber(number);
           return normalizedCandidate.substring(fromIndex - formattedNumberGroups[i].length())
               .startsWith(nationalSignificantNumber);
@@ -568,9 +573,30 @@ final class PhoneNumberMatcher implements Iterator<PhoneNumberMatch> {
     return false;
   }
 
-  static boolean containsMoreThanOneSlash(String candidate) {
-    int firstSlashIndex = candidate.indexOf('/');
-    return (firstSlashIndex > 0 && candidate.substring(firstSlashIndex + 1).contains("/"));
+  static boolean containsMoreThanOneSlashInNationalNumber(PhoneNumber number, String candidate) {
+    int firstSlashInBodyIndex = candidate.indexOf('/');
+    if (firstSlashInBodyIndex < 0) {
+      // No slashes, this is okay.
+      return false;
+    }
+    // Now look for a second one.
+    int secondSlashInBodyIndex = candidate.indexOf('/', firstSlashInBodyIndex + 1);
+    if (secondSlashInBodyIndex < 0) {
+      // Only one slash, this is okay.
+      return false;
+    }
+
+    // If the first slash is after the country calling code, this is permitted.
+    boolean candidateHasCountryCode =
+        (number.getCountryCodeSource() == CountryCodeSource.FROM_NUMBER_WITH_PLUS_SIGN ||
+         number.getCountryCodeSource() == CountryCodeSource.FROM_NUMBER_WITHOUT_PLUS_SIGN);
+    if (candidateHasCountryCode &&
+        PhoneNumberUtil.normalizeDigitsOnly(candidate.substring(0, firstSlashInBodyIndex))
+            .equals(Integer.toString(number.getCountryCode()))) {
+      // Any more slashes and this is illegal.
+      return candidate.substring(secondSlashInBodyIndex + 1).contains("/");
+    }
+    return true;
   }
 
   static boolean containsOnlyValidXChars(
@@ -626,14 +652,8 @@ final class PhoneNumberMatcher implements Iterator<PhoneNumberMatch> {
         // present.
         return true;
       }
-      // Remove the first-group symbol.
-      String candidateNationalPrefixRule = formatRule.getNationalPrefixFormattingRule();
-      // We assume that the first-group symbol will never be _before_ the national prefix.
-      candidateNationalPrefixRule =
-          candidateNationalPrefixRule.substring(0, candidateNationalPrefixRule.indexOf("$1"));
-      candidateNationalPrefixRule =
-          PhoneNumberUtil.normalizeDigitsOnly(candidateNationalPrefixRule);
-      if (candidateNationalPrefixRule.length() == 0) {
+      if (PhoneNumberUtil.formattingRuleHasFirstGroupOnly(
+          formatRule.getNationalPrefixFormattingRule())) {
         // National Prefix not needed for this number.
         return true;
       }

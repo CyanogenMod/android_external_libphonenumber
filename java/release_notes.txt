@@ -1,3 +1,68 @@
+Sep 2, 2013: libphonenumber-5.8
+* Code changes:
+ - Renamed ShortNumberUtil to ShortNumberInfo -> the former class is now deprecated and will be
+   deleted in a later release. At the moment it just delegates to ShortNumberInfo.
+ - New methods in the ShortNumberInfo API - isCarrierSpecific, singleton interface,
+   isPossibleShortNumber, isValidShortNumber, getShortNumberCost. Note this is an experimental API
+   at the moment and subject to change.
+ - Bug fixes:
+    -- AsYouTypeFormatting: 3-digit numbers can be formatted as a group where appropriate
+    -- AsYouTypeFormatting: Countries with an optional national prefix were considered before to
+       have always entered it, resulting in bugs where numbers without the national prefix were
+       not properly formatted.
+    -- Numbers in Chile that overlap with emergency numbers are no longer marked as connecting to
+       them
+    -- Not requiring the NDC to be alone for countries where there is no national prefix in strict
+       grouping when extracting phone numbers
+* Metadata changes:
+ - New alternate formatting data for country calling code(s):
+   30, 31, 385, 58, 62, 63, 971, 972
+ - Updated alternate formatting data for country calling code(s): 43, 44, 49
+ - Moved emergency phone number data to the ShortNumberMetadata.xml file
+ - Updated phone metadata for region code(s):
+   AT, EG, ML, NC, NL, SA
+ - New short number metadata for region code(s):
+   AR, CL, CO, ES, MX, NC
+ - Emergency metadata fixes for region code(s):
+   GA, JM, MH, VE
+
+Aug 09, 2013: libphonenumber-5.7.2
+* Metadata changes:
+ - New alternate formatting data for country calling code(s):
+   352, 359, 372, 373, 375, 595, 7, 855
+ - Updated phone metadata for region code(s):
+   AR, BF, BH, BR, BY, CH, CM, CN, GE, GW, HN, JM, KH, LT, LU, MU, NP, RO, SO
+ - New short number metadata for region code(s): BR
+ - Updated short number metadata for region code(s):
+   CH, FJ, GB, GG, IM, IT, JE, SH
+
+Aug 8, 2013: libphonenumber-5.7.1
+* Metadata/code changes:
+ - Change to the way the metadata is built; now only parts of the proto that are relevant will be
+   generated. This means short-code data won't be generated for the normal protos, and fixed-line
+   data won't be generated for short-number protos. This cuts the metadata binary size approximately
+   in half.
+
+Jul 17, 2013: libphonenumber-5.7
+* Code changes:
+ - Improve phone number extraction recall.
+ - Add support for loading short number metadata.
+
+Jul 16, 2013: libphonenumber-5.6.2
+* Metadata changes:
+ - Updated alternate formatting data for country calling code(s): 49, 61
+ - New metadata for region code(s): TA
+ - Updated metadata for region code(s):
+   BF, BH, BI, BJ, BR, CR, EH, GA, GE, GN, GU, IL, IN, IR, KH, KW, KZ, MA, MT,
+   NA, NE, NL, PH, RO, SH, SO, TK
+ - New geocoding data for country calling code(s): 47 (en), 82 (ar)
+ - Updated geocoding data for country calling code(s):
+   49 (en), 98 (en, fa), 241 (en)
+
+Jul 12, 2013: libphonenumber-5.6.1
+* Code changes:
+ - Rename all instances of PhoneNumberMetadata to PhoneNumberMetadata for consistency.
+
 Jun 05, 2013: libphonenumber-5.6
 * Code changes:
  - Fix for as-you-type-formatting bug affecting countries with no national prefix

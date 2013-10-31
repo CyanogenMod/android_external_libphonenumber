@@ -24,6 +24,7 @@ final class RegionCode {
   static final String UN001 = "001";
   static final String AD = "AD";
   static final String AE = "AE";
+  static final String AM = "AM";
   static final String AO = "AO";
   static final String AQ = "AQ";
   static final String AR = "AR";
@@ -33,15 +34,18 @@ final class RegionCode {
   static final String BY = "BY";
   static final String CA = "CA";
   static final String CH = "CH";
+  static final String CL = "CL";
   static final String CN = "CN";
   static final String CS = "CS";
   static final String DE = "DE";
+  static final String FR = "FR";
   static final String GB = "GB";
   static final String IT = "IT";
   static final String JP = "JP";
   static final String KR = "KR";
   static final String MX = "MX";
   static final String NZ = "NZ";
+  static final String PG = "PG";
   static final String PL = "PL";
   static final String RE = "RE";
   static final String SG = "SG";
