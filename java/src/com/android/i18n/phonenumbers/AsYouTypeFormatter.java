@@ -599,6 +599,7 @@ public class AsYouTypeFormatter {
     }
     String countryCodeString = Integer.toString(countryCode);
     prefixBeforeNationalNumber.append(countryCodeString).append(SEPARATOR_BEFORE_NATIONAL_NUMBER);
+    nationalPrefixExtracted = "";
     return true;
   }
 
