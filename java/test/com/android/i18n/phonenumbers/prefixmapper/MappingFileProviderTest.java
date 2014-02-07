@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.android.i18n.phonenumbers.geocoding;
+package com.android.i18n.phonenumbers.prefixmapper;
 
 import junit.framework.TestCase;
 
