@@ -1,3 +1,59 @@
+Feb 25, 2014: libphonenumber-6.0
+* Code changes:
+ - Better support for detecting phone numbers in text that are beside each other
+ - Change to how Japanese numbers beginning with "00" are modelled, with the
+   side-effect that the maximum possible number length has been extended by 1.
+ - Handle StringIndexOutOfBoundsException in the AsYouTypeFormatter when the
+   national prefix that was extracted was not found in the prefix. This affected
+   countries with very long carrier codes, such as Korea.
+ - Removal of some of the author attributions - contributions to be tracked in
+   CONTRIBUTORS file.
+* Metadata changes:
+ - Updated phone metadata for region code(s): AS, BR, KW, LU
+ - New carrier data for country calling code(s): 1684 (en)
+ - Updated carrier data for country calling code(s): 352 (en)
+
+Feb 07, 2014: libphonenumber-5.9.4
+* Metadata changes:
+ - Updated phone metadata for region code(s):
+   883, BF, BJ, BW, CL, CR, DZ, FR, GD, IN, JP, MD, NG, NZ, PK, PL, SY, UY, VU
+ - Updated short number metadata for region code(s): LV, MD
+ - New carrier data for country calling code(s): 373 (en), 1473 (en)
+ - Updated carrier data for country calling code(s):
+   48 (en), 49 (en), 91 (en), 92 (en), 213 (en), 226 (en), 229 (en), 234 (en),
+   267 (en), 389 (en), 506 (en), 598 (en)
+
+Jan 21, 2014: libphonenumber-5.9.3
+* Metadata changes:
+ - Updated phone metadata for region code(s):
+   BF, BH, BR, CN, GR, IN, MY, PA, TN, US
+ - Updated short number metadata for region code(s): CN
+ - New geocoding data for country calling code(s): 1364 (en), 1725 (en)
+ - Updated geocoding data for country calling code(s): 86 (en)
+ - Updated carrier data for country calling code(s):
+   55 (en), 226 (en), 973 (en)
+
+Dec 20, 2013: libphonenumber-5.9.2
+* Metadata changes:
+ - New alternate formatting data for country calling code(s): 255, 27, 381, 506
+ - Updated alternate formatting data for country calling code(s): 43
+ - Updated phone metadata for region code(s):
+   AG, AI, AS, BB, BF, BM, BS, CA, CR, DM, DO, EC, GD, GU, JM, KN, KY, LC, MP,
+   MS, PR, SO, SX, TC, TT, US, VC, VG, VI
+ - Updated carrier data for country calling code(s): 226 (en)
+
+Dec 13, 2013: libphonenumber-5.9.1
+* Metadata changes:
+ - New alternate formatting data for country calling code(s): 505, 679
+ - Updated phone metadata for region code(s):
+   BF, CI, EG, EH, FJ, IN, KI, MA, MT, NG, NI, SI, SN, SR, TT
+ - Updated short number metadata for region code(s): KI
+ - Updated geocoding data for country calling code(s):
+   27 (en), 226 (en), 1 (en)
+ - New carrier data for country calling code(s): 356 (en), 677 (en)
+ - Updated carrier data for country calling code(s):
+   212 (en), 221 (en), 225 (en), 226 (en), 234 (en), 597 (en), 1 (en)
+
 Nov 12, 2013: libphonenumber-5.9
 * Code changes:
  - Adding support for numbers with multiple Italian leading zeros, by adding a field
