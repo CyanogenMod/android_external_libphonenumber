@@ -16,6 +16,8 @@
 
 package com.android.i18n.phonenumbers;
 
+import android.text.TextUtils;
+
 import com.android.i18n.phonenumbers.Phonemetadata.NumberFormat;
 import com.android.i18n.phonenumbers.Phonemetadata.PhoneMetadata;
 import com.android.i18n.phonenumbers.Phonemetadata.PhoneMetadataCollection;
@@ -2566,6 +2568,15 @@ public class PhoneNumberUtil {
       }
     }
     return false;
+  }
+
+  public String stripExtension(String number) {
+      if (TextUtils.isEmpty(number)) {
+          return number;
+      }
+      StringBuilder builder = new StringBuilder(number);
+      maybeStripExtension(builder);
+      return builder.toString();
   }
 
   /**
