@@ -1,3 +1,63 @@
+Nov 25, 2014: libphonenumber-7.0.1
+* Metadata changes:
+ - New alternate formatting data for country calling code(s): 676
+ - Updated phone metadata for region code(s):
+   BI, CM, ID, IR, KR, LA, NP, TG, TH, TO
+ - New geocoding data for country calling code(s): 237 (en)
+ - Updated geocoding data for country calling code(s): 98 (en, fa)
+ - Updated carrier data for country calling code(s):
+   237 (en), 257 (en), 856 (en), 977 (en)
+
+Oct 29, 2014: libphonenumber-7.0
+* Code changes:
+ - New APIs for ShortNumberInfo. The old APIs have been deprecated and will be
+   removed in an upcoming release.
+* Metadata changes:
+ - Updated phone metadata for region code(s):
+   AR, AU, CC, CI, CX, DZ, EE, IN, KZ, MC, SB, TJ, TT
+ - Updated short number metadata for region code(s): MC
+ - Updated geocoding data for country calling code(s): 34 (en, es), 54 (en)
+ - Updated carrier data for country calling code(s):
+   7 (en), 61 (en), 91 (en), 225 (en), 677 (en), 967 (en), 992 (en), 1868 (en)
+
+Oct 13, 2014: libphonenumber-6.3.1
+* Metadata changes:
+ - Updated phone metadata for region code(s):
+   AC, AU, CR, DE, IL, MR, NO, SA, SR, UG
+ - Updated short number metadata for region code(s): CR
+ - Updated carrier data for country calling code(s):
+   61 (en), 256 (en), 506 (en), 597 (en), 966 (en), 972 (en)
+
+Sep 25, 2014: libphonenumber-6.3
+* Code changes:
+  - Changing the offline geocoder to not return any country at all if the number
+    could belong to multiple countries
+  - Removing obsolete code that treated countries with no metadata as valid.
+* Metadata changes:
+ - New alternate formatting data for country calling code(s): 54, 91
+ - Updated phone metadata for region code(s):
+   AM, AR, BR, CA, CL, IL, IN, IR, IS, KE, NI, PF, SB, SN, TH, TN, US
+ - New geocoding data for country calling code(s):
+   1782 (en), 1929 (en), 1930 (en), 1938 (en)
+ - Updated geocoding data for country calling code(s): 98 (en, fa)
+ - New carrier data for country calling code(s): 354 (en)
+ - Updated carrier data for country calling code(s):
+   27 (en), 56 (en), 66 (en), 91 (en), 92 (en), 98 (en), 216 (en), 221 (en),
+   254 (en), 374 (en), 505 (en), 677 (en), 972 (en)
+
+Aug 21, 2014: libphonenumber-6.2.2
+* Metadata changes:
+ - Updated phone metadata for region code(s): BN, CL, CO, DK, IN, SB, SO
+ - Updated short number metadata for region code(s): FR, SA, US
+ - Updated carrier data for country calling code(s):
+   27 (en), 57 (en), 91 (en), 252 (en), 677 (en)
+
+Jul 28, 2014: libphonenumber-6.2.1
+* Metadata changes:
+ - Updated phone metadata for region code(s): BW, LB, MD, PA, PF, VI, ZM
+ - New carrier data for country calling code(s): 507 (en), 961 (en)
+ - Updated carrier data for country calling code(s): 267 (en), 373 (en)
+
 Jun 30, 2014: libphonenumber-6.2
 * Code changes:
  - Better exclusion of dates when matching phone numbers from text.
