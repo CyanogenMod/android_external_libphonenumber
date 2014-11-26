@@ -25,6 +25,7 @@ import com.android.i18n.phonenumbers.Phonenumber.PhoneNumber.CountryCodeSource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Unit tests for PhoneNumberUtil.java
@@ -114,6 +115,16 @@ public class PhoneNumberUtilTest extends TestMetadataTestCase {
 
   public void testGetSupportedRegions() {
     assertTrue(phoneUtil.getSupportedRegions().size() > 0);
+  }
+
+  public void testGetSupportedGlobalNetworkCallingCodes() {
+    Set<Integer> globalNetworkCallingCodes =
+        phoneUtil.getSupportedGlobalNetworkCallingCodes();
+    assertTrue(globalNetworkCallingCodes.size() > 0);
+    for (int callingCode : globalNetworkCallingCodes) {
+      assertTrue(callingCode > 0);
+      assertEquals(RegionCode.UN001, phoneUtil.getRegionCodeForCountryCode(callingCode));
+    }
   }
 
   public void testGetInstanceLoadBadMetadata() {
@@ -1314,18 +1325,6 @@ public class PhoneNumberUtilTest extends TestMetadataTestCase {
 
     assertEquals(PhoneNumberUtil.ValidationResult.TOO_LONG,
                  phoneUtil.isPossibleNumberWithReason(INTERNATIONAL_TOLL_FREE_TOO_LONG));
-
-    // Try with number that we don't have metadata for.
-    PhoneNumber adNumber = new PhoneNumber();
-    adNumber.setCountryCode(376).setNationalNumber(12345L);
-    assertEquals(PhoneNumberUtil.ValidationResult.IS_POSSIBLE,
-                 phoneUtil.isPossibleNumberWithReason(adNumber));
-    adNumber.setCountryCode(376).setNationalNumber(1L);
-    assertEquals(PhoneNumberUtil.ValidationResult.TOO_SHORT,
-                 phoneUtil.isPossibleNumberWithReason(adNumber));
-    adNumber.setCountryCode(376).setNationalNumber(123456789012345678L);
-    assertEquals(PhoneNumberUtil.ValidationResult.TOO_LONG,
-                 phoneUtil.isPossibleNumberWithReason(adNumber));
   }
 
   public void testIsNotPossibleNumber() {
@@ -1701,6 +1700,8 @@ public class PhoneNumberUtilTest extends TestMetadataTestCase {
     assertEquals(NZ_NUMBER, phoneUtil.parse("tel:03-331-6005;phone-context=+64", RegionCode.NZ));
     assertEquals(NZ_NUMBER, phoneUtil.parse("tel:331-6005;phone-context=+64-3", RegionCode.NZ));
     assertEquals(NZ_NUMBER, phoneUtil.parse("tel:331-6005;phone-context=+64-3", RegionCode.US));
+    assertEquals(NZ_NUMBER, phoneUtil.parse(
+        "My number is tel:03-331-6005;phone-context=+64", RegionCode.NZ));
     // Test parsing RFC3966 format with optional user-defined parameters. The parameters will appear
     // after the context if present.
     assertEquals(NZ_NUMBER, phoneUtil.parse("tel:03-331-6005;phone-context=+64;a=%A1",
@@ -1709,6 +1710,8 @@ public class PhoneNumberUtilTest extends TestMetadataTestCase {
     assertEquals(NZ_NUMBER, phoneUtil.parse("tel:03-331-6005;isub=12345;phone-context=+64",
         RegionCode.NZ));
     assertEquals(NZ_NUMBER, phoneUtil.parse("tel:+64-3-331-6005;isub=12345", RegionCode.NZ));
+    // Test parsing RFC3966 with "tel:" missing.
+    assertEquals(NZ_NUMBER, phoneUtil.parse("03-331-6005;phone-context=+64", RegionCode.NZ));
     // Testing international prefixes.
     // Should strip country calling code.
     assertEquals(NZ_NUMBER, phoneUtil.parse("0064 3 331 6005", RegionCode.NZ));
@@ -2346,7 +2349,7 @@ public class PhoneNumberUtilTest extends TestMetadataTestCase {
     assertEquals("+37612345", phoneUtil.format(adNumber, PhoneNumberFormat.E164));
     assertEquals("12345", phoneUtil.format(adNumber, PhoneNumberFormat.NATIONAL));
     assertEquals(PhoneNumberUtil.PhoneNumberType.UNKNOWN, phoneUtil.getNumberType(adNumber));
-    assertTrue(phoneUtil.isValidNumber(adNumber));
+    assertFalse(phoneUtil.isValidNumber(adNumber));
 
     // Test dialing a US number from within Andorra.
     assertEquals("00 1 650 253 0000",
