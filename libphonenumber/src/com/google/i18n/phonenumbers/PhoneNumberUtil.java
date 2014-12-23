@@ -77,8 +77,13 @@ public class PhoneNumberUtil {
   // input from overflowing the regular-expression engine.
   private static final int MAX_INPUT_STRING_LENGTH = 250;
 
+  // Begin ANDROID-CHANGED
+  //
+  // TODO: Revert this hideous hack once the build system has been changed
+  // to let resource files be jar-jared.
   private static final String META_DATA_FILE_PREFIX =
-      "/com/google/i18n/phonenumbers/data/PhoneNumberMetadataProto";
+      "/com/gaggle/i18n/phonenumbers/data/PhoneNumberMetadataProto".replace("gaggle", "google");
+  // End ANDROID-CHANGED
 
   // Region-code for the unknown region.
   private static final String UNKNOWN_REGION = "ZZ";
