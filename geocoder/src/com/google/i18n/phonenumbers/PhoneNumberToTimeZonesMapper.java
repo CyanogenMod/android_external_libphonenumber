@@ -34,8 +34,10 @@ import java.util.logging.Logger;
  */
 public class PhoneNumberToTimeZonesMapper {
   private static PhoneNumberToTimeZonesMapper instance = null;
+  // TODO: Revert this hideous hack once the build system has been changed
+  // to let resource files be jar-jared.
   private static final String MAPPING_DATA_DIRECTORY =
-      "/com/google/i18n/phonenumbers/timezones/data/";
+      "/com/gaggle/i18n/phonenumbers/timezones/data/".replace("gaggle", "google");
   private static final String MAPPING_DATA_FILE_NAME = "map_data";
   // This is defined by ICU as the unknown time zone.
   private static final String UNKNOWN_TIMEZONE = "Etc/Unknown";
