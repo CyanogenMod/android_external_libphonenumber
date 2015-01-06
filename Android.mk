@@ -51,9 +51,7 @@ include $(BUILD_STATIC_JAVA_LIBRARY)
 
 # For unbundled use, supports gingerbread and up.
 include $(CLEAR_VARS)
-# TODO: Rename to libphonenumber once dependencies have been
-# renamed.
-LOCAL_MODULE := libphonenumber-unbundled
+LOCAL_MODULE := libphonenumber
 LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES := $(libphonenumber_src_files)
 LOCAL_JAVA_RESOURCE_DIRS := $(libphonenumber_resource_dirs)
