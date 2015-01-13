@@ -27,8 +27,10 @@ import junit.framework.TestCase;
  * @author Shaopeng Jia
  */
 public class TestMetadataTestCase extends TestCase {
+  // TODO: Revert this hideous hack once the build system has been changed
+  // to let resource files be jar-jared.
   private static final String TEST_META_DATA_FILE_PREFIX =
-      "/com/google/i18n/phonenumbers/data/PhoneNumberMetadataProtoForTesting";
+      "/com/gaggle/i18n/phonenumbers/data/PhoneNumberMetadataProtoForTesting".replace("gaggle", "google");
 
   protected final PhoneNumberUtil phoneUtil;
 
