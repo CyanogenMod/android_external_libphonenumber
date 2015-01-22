@@ -28,10 +28,8 @@ import java.util.Locale;
 public class PhoneNumberToCarrierMapperTest extends TestCase {
   private final PhoneNumberToCarrierMapper carrierMapper =
       new PhoneNumberToCarrierMapper(TEST_MAPPING_DATA_DIRECTORY);
-  // TODO: Revert this hideous hack once the build system has been changed
-  // to let resource files be jar-jared.
   private static final String TEST_MAPPING_DATA_DIRECTORY =
-      "/com/gaggle/i18n/phonenumbers/carrier/testing_data/".replace("gaggle", "google");
+      "/com/google/i18n/phonenumbers/carrier/testing_data/";
 
   // Set up some test numbers to re-use.
   private static final PhoneNumber AO_MOBILE1 =

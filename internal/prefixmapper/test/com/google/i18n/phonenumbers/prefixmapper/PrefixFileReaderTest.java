@@ -26,10 +26,8 @@ import junit.framework.TestCase;
  */
 public class PrefixFileReaderTest extends TestCase {
   private final PrefixFileReader reader = new PrefixFileReader(TEST_MAPPING_DATA_DIRECTORY);
-  // TODO: Revert this hideous hack once the build system has been changed
-  // to let resource files be jar-jared.
   private static final String TEST_MAPPING_DATA_DIRECTORY =
-      "/com/gaggle/i18n/phonenumbers/geocoding/testing_data/".replace("gaggle", "google");
+      "/com/google/i18n/phonenumbers/geocoding/testing_data/";
 
   private static final PhoneNumber KO_NUMBER =
       new PhoneNumber().setCountryCode(82).setNationalNumber(22123456L);

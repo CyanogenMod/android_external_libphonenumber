@@ -30,10 +30,8 @@ import java.util.List;
 public class PhoneNumberToTimeZonesMapperTest extends TestCase {
   private final PhoneNumberToTimeZonesMapper prefixTimeZonesMapper =
       new PhoneNumberToTimeZonesMapper(TEST_MAPPING_DATA_DIRECTORY);
-  // TODO: Revert this hideous hack once the build system has been changed
-  // to let resource files be jar-jared.
   private static final String TEST_MAPPING_DATA_DIRECTORY =
-      "/com/gaggle/i18n/phonenumbers/timezones/testing_data/".replace("gaggle", "google");
+      "/com/google/i18n/phonenumbers/timezones/testing_data/";
   // Set up some test numbers to re-use.
   private static final PhoneNumber AU_NUMBER =
       new PhoneNumber().setCountryCode(61).setNationalNumber(236618300L);

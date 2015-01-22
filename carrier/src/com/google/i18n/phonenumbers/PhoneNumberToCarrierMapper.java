@@ -30,10 +30,8 @@ import java.util.Locale;
  */
 public class PhoneNumberToCarrierMapper {
   private static PhoneNumberToCarrierMapper instance = null;
-  // TODO: Revert this hideous hack once the build system has been changed
-  // to let resource files be jar-jared.
   private static final String MAPPING_DATA_DIRECTORY =
-      "/com/gaggle/i18n/phonenumbers/carrier/data/".replace("gaggle", "google");
+      "/com/google/i18n/phonenumbers/carrier/data/";
   private PrefixFileReader prefixFileReader = null;
 
   private final PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();

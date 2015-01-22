@@ -37,12 +37,10 @@ import java.util.logging.Logger;
  * would handle the main metadata file (PhoneNumberMetadata.xml) as well.
  */
 class MetadataManager {
-  // TODO: Revert this hideous hack once the build system has been changed
-  // to let resource files be jar-jared.
   private static final String ALTERNATE_FORMATS_FILE_PREFIX =
-      "/com/gaggle/i18n/phonenumbers/data/PhoneNumberAlternateFormatsProto".replace("gaggle", "google");
+      "/com/google/i18n/phonenumbers/data/PhoneNumberAlternateFormatsProto";
   private static final String SHORT_NUMBER_METADATA_FILE_PREFIX =
-      "/com/gaggle/i18n/phonenumbers/data/ShortNumberMetadataProto".replace("gaggle", "google");
+      "/com/google/i18n/phonenumbers/data/ShortNumberMetadataProto";
 
   private static final Logger LOGGER = Logger.getLogger(MetadataManager.class.getName());
 
