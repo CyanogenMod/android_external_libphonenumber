@@ -29,10 +29,8 @@ import java.util.Locale;
 public class PhoneNumberOfflineGeocoderTest extends TestCase {
   private final PhoneNumberOfflineGeocoder geocoder =
       new PhoneNumberOfflineGeocoder(TEST_MAPPING_DATA_DIRECTORY);
-  // TODO: Revert this hideous hack once the build system has been changed
-  // to let resource files be jar-jared.
   private static final String TEST_MAPPING_DATA_DIRECTORY =
-      "/com/gaggle/i18n/phonenumbers/geocoding/testing_data/".replace("gaggle", "google");
+      "/com/google/i18n/phonenumbers/geocoding/testing_data/";
 
   // Set up some test numbers to re-use.
   private static final PhoneNumber KO_NUMBER1 =
