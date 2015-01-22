@@ -32,10 +32,8 @@ import java.util.Locale;
  */
 public class PhoneNumberOfflineGeocoder {
   private static PhoneNumberOfflineGeocoder instance = null;
-  // TODO: Revert this hideous hack once the build system has been changed
-  // to let resource files be jar-jared.
   private static final String MAPPING_DATA_DIRECTORY =
-      "/com/gaggle/i18n/phonenumbers/geocoding/data/".replace("gaggle", "google");
+      "/com/google/i18n/phonenumbers/geocoding/data/";
   private PrefixFileReader prefixFileReader = null;
 
   private final PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
