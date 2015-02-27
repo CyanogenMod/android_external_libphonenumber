@@ -47,13 +47,7 @@ LOCAL_JARJAR_RULES := $(LOCAL_PATH)/jarjar-rules.txt
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_NO_STANDARD_LIBRARIES := true
 LOCAL_JAVA_LIBRARIES := core-libart
-LOCAL_JACK_ENABLED := disabled
 include $(BUILD_STATIC_JAVA_LIBRARY)
-
-# Allow to build jack library from Jill
-$(full_classes_jack): $(full_classes_proguard_jar) $(JILL_JAR) $(JACK_JAR)
-	$(transform-jar-to-jack)
-
 
 # For unbundled use, supports gingerbread and up.
 include $(CLEAR_VARS)
