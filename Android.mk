@@ -42,7 +42,6 @@ LOCAL_MODULE := libphonenumber-platform
 LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES := $(libphonenumber_platform_src_files)
 LOCAL_JAVA_RESOURCE_DIRS := $(libphonenumber_platform_resource_dirs)
-LOCAL_JAVACFLAGS := -encoding UTF-8
 LOCAL_JARJAR_RULES := $(LOCAL_PATH)/jarjar-rules.txt
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_NO_STANDARD_LIBRARIES := true
@@ -55,7 +54,6 @@ LOCAL_MODULE := libphonenumber
 LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES := $(libphonenumber_src_files)
 LOCAL_JAVA_RESOURCE_DIRS := $(libphonenumber_resource_dirs)
-LOCAL_JAVACFLAGS := -encoding UTF-8
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_SDK_VERSION := 9
 include $(BUILD_STATIC_JAVA_LIBRARY)
