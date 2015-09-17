@@ -2396,7 +2396,24 @@ public class PhoneNumberUtil {
     }
     Pattern possibleNumberPattern =
         regexCache.getPatternForRegex(generalNumDesc.getPossibleNumberPattern());
-    return testNumberLengthAgainstPattern(possibleNumberPattern, nationalNumber);
+    ValidationResult validationResult =
+            testNumberLengthAgainstPattern(possibleNumberPattern, nationalNumber);
+
+    if (validationResult != ValidationResult.IS_POSSIBLE) {
+        // Check if phone number is possibly a short number
+        logger.log(Level.FINER, "Checking if phone number is a possible short number");
+        PhoneMetadata phoneMetadata =
+                MetadataManager.getShortNumberMetadataForRegion(regionCode);
+        if (phoneMetadata != null) {
+            generalNumDesc = phoneMetadata.getGeneralDesc();
+            possibleNumberPattern =
+                    regexCache.getPatternForRegex(generalNumDesc.getPossibleNumberPattern());
+            validationResult =
+                    testNumberLengthAgainstPattern(possibleNumberPattern, nationalNumber);
+        }
+    }
+
+    return validationResult;
   }
 
   /**
