@@ -2395,8 +2395,25 @@ public class PhoneNumberUtil {
       }
     }
     Pattern possibleNumberPattern =
-        regexCache.getPatternForRegex(generalNumDesc.getPossibleNumberPattern());
-    return testNumberLengthAgainstPattern(possibleNumberPattern, nationalNumber);
+            regexCache.getPatternForRegex(generalNumDesc.getPossibleNumberPattern());
+    ValidationResult validationResult =
+            testNumberLengthAgainstPattern(possibleNumberPattern, nationalNumber);
+
+    if (validationResult == ValidationResult.TOO_SHORT) {
+      // Check if phone number is possibly a short number
+      logger.log(Level.FINER, "Checking if phone number is a possible short number");
+      PhoneMetadata phoneMetadata =
+              MetadataManager.getShortNumberMetadataForRegion(regionCode);
+      if (phoneMetadata != null) {
+        generalNumDesc = phoneMetadata.getShortCode();
+        possibleNumberPattern =
+                regexCache.getPatternForRegex(generalNumDesc.getNationalNumberPattern());
+        validationResult =
+                testNumberLengthAgainstPattern(possibleNumberPattern, nationalNumber);
+      }
+    }
+
+    return validationResult;
   }
 
   /**

@@ -1303,7 +1303,7 @@ public class PhoneNumberUtilTest extends TestMetadataTestCase {
                  phoneUtil.isPossibleNumberWithReason(number));
 
     number.clear();
-    number.setCountryCode(1).setNationalNumber(253000L);
+    number.setCountryCode(1).setNationalNumber(2530L);
     assertEquals(PhoneNumberUtil.ValidationResult.TOO_SHORT,
                  phoneUtil.isPossibleNumberWithReason(number));
 
@@ -1333,7 +1333,7 @@ public class PhoneNumberUtilTest extends TestMetadataTestCase {
     assertFalse(phoneUtil.isPossibleNumber(INTERNATIONAL_TOLL_FREE_TOO_LONG));
 
     PhoneNumber number = new PhoneNumber();
-    number.setCountryCode(1).setNationalNumber(253000L);
+    number.setCountryCode(1).setNationalNumber(2530L);
     assertFalse(phoneUtil.isPossibleNumber(number));
 
     number.clear();
@@ -1342,7 +1342,7 @@ public class PhoneNumberUtilTest extends TestMetadataTestCase {
     assertFalse(phoneUtil.isPossibleNumber("+1 650 253 00000", RegionCode.US));
     assertFalse(phoneUtil.isPossibleNumber("(650) 253-00000", RegionCode.US));
     assertFalse(phoneUtil.isPossibleNumber("I want a Pizza", RegionCode.US));
-    assertFalse(phoneUtil.isPossibleNumber("253-000", RegionCode.US));
+    assertFalse(phoneUtil.isPossibleNumber("253-0", RegionCode.US));
     assertFalse(phoneUtil.isPossibleNumber("1 3000", RegionCode.GB));
     assertFalse(phoneUtil.isPossibleNumber("+44 300", RegionCode.GB));
     assertFalse(phoneUtil.isPossibleNumber("+800 1234 5678 9", RegionCode.UN001));

@@ -971,11 +971,6 @@ public class PhoneNumberMatcherTest extends TestMetadataTestCase {
     // With a second number later.
     contextPairs.add(new NumberContext("Call ", " or +1800-123-4567!"));
     contextPairs.add(new NumberContext("Call me on June 2 at", ""));  // with a Month-Day date
-    // With publication pages.
-    contextPairs.add(new NumberContext(
-        "As quoted by Alfonso 12-15 (2009), you may call me at ", ""));
-    contextPairs.add(new NumberContext(
-        "As quoted by Alfonso et al. 12-15 (2009), you may call me at ", ""));
     // With dates, written in the American style.
     contextPairs.add(new NumberContext(
         "As I said on 03/10/2011, you may call me at ", ""));
