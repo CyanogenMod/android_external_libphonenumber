@@ -56,7 +56,7 @@ LOCAL_JAVA_RESOURCE_DIRS := $(libphonenumber_platform_resource_dirs)
 LOCAL_JARJAR_RULES := $(LOCAL_PATH)/jarjar-rules.txt
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_NO_STANDARD_LIBRARIES := true
-LOCAL_JAVA_LIBRARIES := core-libart
+LOCAL_JAVA_LIBRARIES := core-oj core-libart
 LOCAL_STATIC_JAVA_LIBRARIES := libprotobuf-java-nano
 include $(BUILD_STATIC_JAVA_LIBRARY)
 
