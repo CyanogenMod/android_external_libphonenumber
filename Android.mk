@@ -57,6 +57,7 @@ LOCAL_JARJAR_RULES := $(LOCAL_PATH)/jarjar-rules.txt
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_NO_STANDARD_LIBRARIES := true
 LOCAL_JAVA_LIBRARIES := core-libart
+LOCAL_STATIC_JAVA_LIBRARIES := libprotobuf-java-nano
 include $(BUILD_STATIC_JAVA_LIBRARY)
 
 # For unbundled use, supports gingerbread and up.
@@ -67,12 +68,13 @@ LOCAL_SRC_FILES := $(libphonenumber_src_files)
 LOCAL_JAVA_RESOURCE_DIRS := $(libphonenumber_resource_dirs)
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_SDK_VERSION := 9
+LOCAL_JAVA_LIBRARIES := libprotobuf-java-nano
 include $(BUILD_STATIC_JAVA_LIBRARY)
 
 # Tests for unbundled use.
-# vogar --timeout 0 --classpath out/target/common/obj/JAVA_LIBRARIES/libphonenumber_intermediates/classes.jar \
-#   --classpath out/target/common/obj/JAVA_LIBRARIES/libphonenumber-test_intermediates/classes.jar \
-#   com.google.i18n.phonenumbers
+# vogar --timeout 0 \
+    --classpath out/target/common/obj/JAVA_LIBRARIES/libphonenumber-test_intermediates/classes.jar \
+    com.google.i18n.phonenumbers
 include $(CLEAR_VARS)
 LOCAL_MODULE := libphonenumber-test
 LOCAL_MODULE_TAGS := optional
@@ -80,5 +82,5 @@ LOCAL_SRC_FILES := $(libphonenumber_test_files)
 LOCAL_JAVA_RESOURCE_DIRS := $(libphonenumber_test_resource_dirs)
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_SDK_VERSION := current
-LOCAL_JAVA_LIBRARIES := libphonenumber
+LOCAL_STATIC_JAVA_LIBRARIES := libphonenumber libprotobuf-java-nano
 include $(BUILD_STATIC_JAVA_LIBRARY)
