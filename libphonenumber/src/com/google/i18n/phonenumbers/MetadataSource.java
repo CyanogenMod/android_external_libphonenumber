@@ -16,10 +16,10 @@
 
 package com.google.i18n.phonenumbers;
 
-import com.google.i18n.phonenumbers.nano.Phonemetadata.PhoneMetadata;
+import com.google.i18n.phonenumbers.Phonemetadata.PhoneMetadata;
 
 /**
- * A source for phone metadata for all regions.
+ * A source for phone metadata from resources.
  */
 interface MetadataSource {
   /**
