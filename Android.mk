@@ -68,7 +68,7 @@ LOCAL_SRC_FILES := $(libphonenumber_src_files)
 LOCAL_JAVA_RESOURCE_DIRS := $(libphonenumber_resource_dirs)
 LOCAL_ADDITIONAL_DEPENDENCIES := $(LOCAL_PATH)/Android.mk
 LOCAL_SDK_VERSION := 9
-LOCAL_JAVA_LIBRARIES := libprotobuf-java-nano
+LOCAL_STATIC_JAVA_LIBRARIES := libprotobuf-java-nano
 include $(BUILD_STATIC_JAVA_LIBRARY)
 
 # Tests for unbundled use.
