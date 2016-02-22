@@ -1,0 +1,14 @@
+apply plugin: 'java'
+apply plugin: 'protobuf'
+
+sourceSets.main {
+    java.srcDirs = [
+        'libphonenumber/src',
+        'internal/prefixmapper/src',
+        'geocoder/src'
+    ]
+}
+
+dependencies {
+    compile project(path: ':libprotobuf', configuration: 'nano')
+}
