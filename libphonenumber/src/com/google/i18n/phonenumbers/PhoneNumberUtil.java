@@ -2375,7 +2375,22 @@ public class PhoneNumberUtil {
     PhoneMetadata metadata = getMetadataForRegionOrCallingCode(countryCode, regionCode);
     Pattern possibleNumberPattern =
         regexCache.getPatternForRegex(metadata.getGeneralDesc().getPossibleNumberPattern());
-    return testNumberLengthAgainstPattern(possibleNumberPattern, nationalNumber);
+
+    ValidationResult validationResult =
+      testNumberLengthAgainstPattern(possibleNumberPattern, nationalNumber);
+
+    /* For the specific Spain case, return short numbers as possible valids.
+       On Android, we really should have this enabled from an overlay or other
+       config method, but the plumbing for this would be fairly invasive */
+    if (validationResult == ValidationResult.TOO_SHORT &&
+          getRegionCodeForCountryCode(number.getCountryCode()).equals("ES")) {
+      logger.log(Level.FINER, "Checking if phone number is a possible short number");
+      if (ShortNumberInfo.getInstance().isValidShortNumberForRegion(number, "ES")) {
+        return ValidationResult.IS_POSSIBLE;
+      }
+    }
+
+    return validationResult;
   }
 
   /**
